@@ -6,7 +6,7 @@ import { sql } from '@/lib/database';
 // POST /api/habits/[id]/entries - Toggle habit entry for a specific date
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const habitId = params.id;
+    const { id: habitId } = await params;
     const { date, completed, notes } = await request.json();
 
     if (!date) {
@@ -73,7 +73,7 @@ export async function POST(
 // GET /api/habits/[id]/entries - Get habit entries for a specific habit
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -82,7 +82,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const habitId = params.id;
+    const { id: habitId } = await params;
 
     // Check if habit belongs to user
     const habit = await sql`

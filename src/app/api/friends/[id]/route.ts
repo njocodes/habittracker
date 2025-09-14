@@ -6,7 +6,7 @@ import { sql } from '@/lib/database';
 // PUT /api/friends/[id] - Accept or reject a friend request
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connectionId = params.id;
+    const { id: connectionId } = await params;
     const { action } = await request.json(); // 'accept' or 'reject'
 
     if (!['accept', 'reject'].includes(action)) {
@@ -74,7 +74,7 @@ export async function PUT(
 // DELETE /api/friends/[id] - Remove a friend
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -83,7 +83,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connectionId = params.id;
+    const { id: connectionId } = await params;
 
     // Remove friend connection
     await sql`

@@ -6,7 +6,7 @@ import { sql } from '@/lib/database';
 // DELETE /api/habits/[id] - Delete a habit
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const habitId = params.id;
+    const { id: habitId } = await params;
 
     // Check if habit belongs to user
     const habit = await sql`
