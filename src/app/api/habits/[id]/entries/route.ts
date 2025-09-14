@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
+import { Session } from '@/types/session';
 
 // POST /api/habits/[id]/entries - Toggle habit entry for a specific date
 export async function POST(
@@ -11,7 +12,7 @@ export async function POST(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -28,7 +29,7 @@ export async function POST(
     // Check if habit belongs to user
     const habit = await sql`
       SELECT id FROM habits 
-      WHERE id = ${habitId} AND user_id = ${(session as any).user.id} AND is_active = true
+      WHERE id = ${habitId} AND user_id = ${(session as Session).user.id} AND is_active = true
     `;
 
     if (habit.length === 0) {
@@ -56,7 +57,7 @@ export async function POST(
       // Create new entry
       const newEntry = await sql`
         INSERT INTO habit_entries (habit_id, user_id, date, completed, notes, completed_at)
-        VALUES (${habitId}, ${(session as any).user.id}, ${date}, ${completed || true}, ${notes || null}, ${completed !== false ? new Date().toISOString() : null})
+        VALUES (${habitId}, ${(session as Session).user.id}, ${date}, ${completed || true}, ${notes || null}, ${completed !== false ? new Date().toISOString() : null})
         RETURNING *
       `;
       return NextResponse.json(newEntry[0]);
@@ -78,7 +79,7 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -87,7 +88,7 @@ export async function GET(
     // Check if habit belongs to user
     const habit = await sql`
       SELECT id FROM habits 
-      WHERE id = ${habitId} AND user_id = ${(session as any).user.id} AND is_active = true
+      WHERE id = ${habitId} AND user_id = ${(session as Session).user.id} AND is_active = true
     `;
 
     if (habit.length === 0) {

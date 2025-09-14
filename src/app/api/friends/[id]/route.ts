@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
+import { Session } from '@/types/session';
 
 // PUT /api/friends/[id] - Accept or reject a friend request
 export async function PUT(
@@ -11,7 +12,7 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -79,7 +80,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

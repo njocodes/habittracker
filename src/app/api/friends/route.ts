@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
+import { Session } from '@/types/session';
 
 // GET /api/friends - Get all friends for the current user
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -16,7 +17,7 @@ export async function GET() {
       SELECT fc.*, u.email, u.full_name, u.avatar_url, u.share_code
       FROM friend_connections fc
       LEFT JOIN users u ON fc.friend_id = u.id
-      WHERE fc.user_id = ${(session as any).user.id} AND fc.status = 'accepted'
+      WHERE fc.user_id = ${(session as Session).user.id} AND fc.status = 'accepted'
     `;
 
     return NextResponse.json(friends);
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     // Check if already friends
     const existingConnection = await sql`
       SELECT id FROM friend_connections 
-      WHERE user_id = ${(session as any).user.id} AND friend_id = ${friend.id}
+      WHERE user_id = ${(session as Session).user.id} AND friend_id = ${friend.id}
     `;
 
     if (existingConnection.length > 0) {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if trying to add yourself
-    if (friend.id === (session as any).user.id) {
+    if (friend.id === (session as Session).user.id) {
       return NextResponse.json(
         { error: 'Cannot add yourself as a friend' },
         { status: 400 }
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
     // Create friend connection
     const newConnection = await sql`
       INSERT INTO friend_connections (user_id, friend_id, share_code, status)
-      VALUES (${(session as any).user.id}, ${friend.id}, ${shareCode.toUpperCase()}, 'pending')
+      VALUES (${(session as Session).user.id}, ${friend.id}, ${shareCode.toUpperCase()}, 'pending')
       RETURNING *
     `;
 

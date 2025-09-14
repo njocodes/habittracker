@@ -2,19 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
+import { Session } from '@/types/session';
 
 // GET /api/habits - Get all habits for the current user
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const habits = await sql`
       SELECT * FROM habits 
-      WHERE user_id = ${(session as any).user.id} 
+      WHERE user_id = ${(session as Session).user.id} 
       AND is_active = true
       ORDER BY created_at DESC
     `;
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!(session as any)?.user?.id) {
+    if (!(session as Session)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const newHabit = await sql`
       INSERT INTO habits (user_id, name, description, color, icon, target_frequency, target_count)
-      VALUES (${(session as any).user.id}, ${name}, ${description || null}, ${color || 'green'}, ${icon || '📝'}, ${targetFrequency || 'daily'}, ${targetCount || null})
+      VALUES (${(session as Session).user.id}, ${name}, ${description || null}, ${color || 'green'}, ${icon || '📝'}, ${targetFrequency || 'daily'}, ${targetCount || null})
       RETURNING *
     `;
 
