@@ -34,7 +34,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
 
   if (!isOpen) return null;
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  const updateSetting = (category: string, key: string, value: string | boolean) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
@@ -74,7 +74,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       activeTab === tab.id
                         ? 'bg-blue-100 text-blue-700'

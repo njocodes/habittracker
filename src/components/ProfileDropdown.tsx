@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { User, LogOut, Settings, Users, Share2, ChevronDown } from 'lucide-react';
 import { SettingsModal } from './SettingsModal';
-import { sql } from '@/lib/database';
 import { signOut } from 'next-auth/react';
 
 interface ProfileDropdownProps {
@@ -27,7 +26,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
     avatar_url: string;
   }[]>([]);
   const [shareCodeInput, setShareCodeInput] = useState('');
-  const [userShareCode, setUserShareCode] = useState('SHARE123');
+  const [userShareCode] = useState('SHARE123');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
