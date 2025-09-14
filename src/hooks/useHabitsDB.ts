@@ -10,7 +10,7 @@ export function useHabitsDB() {
 
   // Load habits from API
   const loadHabits = async () => {
-    if (!session?.user?.id) return;
+    if (!(session as any)?.user?.id) return;
     
     try {
       const response = await fetch('/api/habits');
@@ -40,7 +40,7 @@ export function useHabitsDB() {
   };
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if ((session as any)?.user?.id) {
       loadHabits().finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
