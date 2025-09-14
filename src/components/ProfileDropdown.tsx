@@ -27,6 +27,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
     avatar_url: string;
   }[]>([]);
   const [shareCodeInput, setShareCodeInput] = useState('');
+  const [userShareCode, setUserShareCode] = useState('SHARE123');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,13 +51,11 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
 
   const loadFriends = async () => {
     try {
-      const friendsData = await sql`
-        SELECT fc.*, u.email, u.full_name, u.avatar_url
-        FROM friend_connections fc
-        LEFT JOIN users u ON fc.friend_id = u.id
-        WHERE fc.user_id = ${user.id} AND fc.status = 'accepted'
-      `;
-      setFriends((friendsData as typeof friends) || []);
+      const response = await fetch('/api/friends');
+      if (response.ok) {
+        const friendsData = await response.json();
+        setFriends(friendsData);
+      }
     } catch (error) {
       console.error('Error loading friends:', error);
     }
@@ -74,22 +73,31 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
     if (!shareCodeInput.trim()) return;
 
     try {
-      await sql`
-        INSERT INTO friend_connections (user_id, share_code, status)
-        VALUES (${user.id}, ${shareCodeInput.trim()}, 'pending')
-      `;
-      
-      setShareCodeInput('');
-      setShowShareCode(false);
-      loadFriends();
+      const response = await fetch('/api/friends', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          shareCode: shareCodeInput.trim()
+        }),
+      });
+
+      if (response.ok) {
+        setShareCodeInput('');
+        setShowShareCode(false);
+        loadFriends();
+      } else {
+        const error = await response.json();
+        console.error('Error adding friend:', error.error);
+      }
     } catch (error) {
       console.error('Error adding friend:', error);
     }
   };
 
   const copyShareCode = () => {
-    // TODO: Get share code from user data
-    navigator.clipboard.writeText('SHARE123');
+    navigator.clipboard.writeText(userShareCode);
     // You could add a toast notification here
   };
 
@@ -156,7 +164,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
                 <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-2 mb-3">
                     <code className="flex-1 bg-white px-3 py-2 rounded border text-sm font-mono">
-                      SHARE123
+                      {userShareCode}
                     </code>
                     <button
                       onClick={copyShareCode}
