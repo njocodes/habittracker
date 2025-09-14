@@ -11,7 +11,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -20,7 +20,7 @@ export async function DELETE(
     // Check if habit belongs to user
     const habit = await sql`
       SELECT id FROM habits 
-      WHERE id = ${habitId} AND user_id = ${session.user.id}
+      WHERE id = ${habitId} AND user_id = ${(session as any).user.id}
     `;
 
     if (habit.length === 0) {
@@ -31,7 +31,7 @@ export async function DELETE(
     await sql`
       UPDATE habits 
       SET is_active = false 
-      WHERE id = ${habitId} AND user_id = ${session.user.id}
+      WHERE id = ${habitId} AND user_id = ${(session as any).user.id}
     `;
 
     return NextResponse.json({ message: 'Habit deleted successfully' });

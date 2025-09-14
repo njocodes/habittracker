@@ -8,13 +8,13 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const habits = await sql`
       SELECT * FROM habits 
-      WHERE user_id = ${session.user.id} 
+      WHERE user_id = ${(session as any).user.id} 
       AND is_active = true
       ORDER BY created_at DESC
     `;
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     const newHabit = await sql`
       INSERT INTO habits (user_id, name, description, color, icon, target_frequency, target_count)
-      VALUES (${session.user.id}, ${name}, ${description || null}, ${color || 'green'}, ${icon || '📝'}, ${targetFrequency || 'daily'}, ${targetCount || null})
+      VALUES (${(session as any).user.id}, ${name}, ${description || null}, ${color || 'green'}, ${icon || '📝'}, ${targetFrequency || 'daily'}, ${targetCount || null})
       RETURNING *
     `;
 
