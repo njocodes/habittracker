@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { User, LogOut, Settings, Users, Share2, ChevronDown } from 'lucide-react';
+import { SettingsModal } from './SettingsModal';
 import { sql } from '@/lib/database';
 import { signOut } from 'next-auth/react';
 
@@ -18,6 +19,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showShareCode, setShowShareCode] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [friends, setFriends] = useState<{
     id: string;
     email: string;
@@ -223,7 +225,13 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
             </div>
 
             {/* Settings */}
-            <button className="flex items-center space-x-3 w-full text-left hover:bg-gray-50 rounded-lg p-2 mx-2">
+            <button 
+              onClick={() => {
+                setShowSettings(true);
+                setIsOpen(false);
+              }}
+              className="flex items-center space-x-3 w-full text-left hover:bg-gray-50 rounded-lg p-2 mx-2"
+            >
               <Settings className="w-5 h-5 text-gray-500" />
               <span className="text-gray-700">Einstellungen</span>
             </button>
@@ -239,6 +247,13 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
           </div>
         </div>
       )}
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        user={user}
+      />
     </div>
   );
 }
