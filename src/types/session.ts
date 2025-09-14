@@ -1,4 +1,4 @@
-// Session type for NextAuth.js compatibility
+// Session types for NextAuth.js compatibility
 export interface SessionUser {
   id: string;
   email?: string | null;
