@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Habit, HabitEntry, HabitStats } from '@/types/habits';
 import { useSession } from 'next-auth/react';
-import { ClientSession } from '@/types/session';
 
 export function useHabitsDB() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -11,7 +10,7 @@ export function useHabitsDB() {
 
   // Load habits from API
   const loadHabits = async () => {
-    if (!(session as ClientSession)?.user?.id) return;
+    if (!session?.user?.id) return;
     
     try {
       const response = await fetch('/api/habits');
@@ -41,7 +40,7 @@ export function useHabitsDB() {
   };
 
   useEffect(() => {
-    if ((session as ClientSession)?.user?.id) {
+    if (session?.user?.id) {
       loadHabits().finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
