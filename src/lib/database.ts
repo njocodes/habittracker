@@ -1,6 +1,8 @@
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL!);
+// Use POSTGRES_URL_NO_SSL if DATABASE_URL is not available
+const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL_NO_SSL || process.env.POSTGRES_URL;
+const sql = neon(databaseUrl!);
 
 export { sql };
 
