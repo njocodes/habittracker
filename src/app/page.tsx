@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Download, BarChart3, List, Grid } from 'lucide-react';
+import { Plus, Download, BarChart3, List, Grid, Calendar } from 'lucide-react';
 import { useHabitsDB } from '@/hooks/useHabitsDB';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { CalendarView } from '@/components/CalendarView';
 import { useSession } from 'next-auth/react';
 import { format, subDays } from 'date-fns';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'today' | 'weekly' | 'overall'>('overall');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('list');
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -137,24 +138,34 @@ export default function HomePage() {
             </button>
           </div>
         ) : (
-          <div className="space-y-3">
-            {habits.map((habit) => {
-              const isCompletedToday = isHabitCompletedOnDate(habit.id, today);
-              const progressDots = getProgressDots(habit.id, getDaysForView());
-              
-              return (
-                <HabitCard
-                  key={habit.id}
-                  habit={habit}
-                  isCompleted={isCompletedToday}
-                  onToggle={() => toggleHabitEntry(habit.id, today)}
-                  onEdit={() => {}} // TODO: Implement edit
-                  onDelete={() => deleteHabit(habit.id)}
-                  progressDots={progressDots}
-                />
-              );
-            })}
-          </div>
+          <>
+            {viewMode === 'calendar' ? (
+              <CalendarView
+                habits={habits}
+                isHabitCompletedOnDate={isHabitCompletedOnDate}
+                onToggleHabit={toggleHabitEntry}
+              />
+            ) : (
+              <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
+                {habits.map((habit) => {
+                  const isCompletedToday = isHabitCompletedOnDate(habit.id, today);
+                  const progressDots = getProgressDots(habit.id, getDaysForView());
+                  
+                  return (
+                    <HabitCard
+                      key={habit.id}
+                      habit={habit}
+                      isCompleted={isCompletedToday}
+                      onToggle={() => toggleHabitEntry(habit.id, today)}
+                      onEdit={() => {}} // TODO: Implement edit
+                      onDelete={() => deleteHabit(habit.id)}
+                      progressDots={progressDots}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -192,6 +203,16 @@ export default function HomePage() {
             }`}
           >
             <Grid className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => setViewMode('calendar')}
+            className={`p-2 rounded-lg transition-colors ${
+              viewMode === 'calendar'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Calendar className="w-6 h-6" />
           </button>
         </div>
       </div>
