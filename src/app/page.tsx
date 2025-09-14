@@ -1,103 +1,184 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import { useState } from 'react';
+import { Plus, Download, BarChart3, List, Grid } from 'lucide-react';
+import { useHabits } from '@/hooks/useHabits';
+import { HabitCard } from '@/components/HabitCard';
+import { AddHabitModal } from '@/components/AddHabitModal';
+import { format, subDays } from 'date-fns';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function HomePage() {
+  const [activeTab, setActiveTab] = useState<'today' | 'weekly' | 'overall'>('overall');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+
+  const {
+    habits,
+    isLoading,
+    addHabit,
+    toggleHabitEntry,
+    isHabitCompletedOnDate,
+  } = useHabits();
+
+  const today = format(new Date(), 'yyyy-MM-dd');
+
+  const getProgressDots = (habitId: string, days: number) => {
+    const dots = [];
+    const startDate = subDays(new Date(), days - 1);
+    
+    for (let i = 0; i < days; i++) {
+      const date = format(subDays(startDate, -i), 'yyyy-MM-dd');
+      dots.push(isHabitCompletedOnDate(habitId, date));
+    }
+    
+    return dots;
+  };
+
+  const getDaysForView = () => {
+    switch (activeTab) {
+      case 'today':
+        return 1;
+      case 'weekly':
+        return 7;
+      case 'overall':
+        return 28; // 4 weeks
+      default:
+        return 28;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading habits...</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">Habits</h1>
+          <div className="flex items-center space-x-3">
+            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <Plus className="w-5 h-5 text-gray-600" />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <Download className="w-5 h-5 text-gray-600" />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <BarChart3 className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
+          {[
+            { key: 'today', label: 'Today' },
+            { key: 'weekly', label: 'Weekly' },
+            { key: 'overall', label: 'Overall' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as 'today' | 'weekly' | 'overall')}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-4 py-6">
+        {habits.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Plus className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No habits yet</h3>
+            <p className="text-gray-500 mb-6">Start building good habits by adding your first one</p>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Add Your First Habit
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {habits.map((habit) => {
+              const isCompletedToday = isHabitCompletedOnDate(habit.id, today);
+              const progressDots = getProgressDots(habit.id, getDaysForView());
+              
+              return (
+                <HabitCard
+                  key={habit.id}
+                  habit={habit}
+                  isCompleted={isCompletedToday}
+                  onToggle={() => toggleHabitEntry(habit.id, today)}
+                  progressDots={progressDots}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Add Habit Button */}
+      {habits.length > 0 && (
+        <div className="fixed bottom-6 right-6">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
+        </div>
+      )}
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="flex justify-center space-x-8">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`p-2 rounded-lg transition-colors ${
+              viewMode === 'list'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <List className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`p-2 rounded-lg transition-colors ${
+              viewMode === 'grid'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Grid className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Add Habit Modal */}
+      <AddHabitModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddHabit={addHabit}
+      />
     </div>
   );
 }
