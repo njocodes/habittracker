@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, MoreVertical, Check, X, Calendar, List, Target } from 'lucide-react';
-import { useHabits } from '@/hooks/useHabits';
+import { useHabitsDB } from '@/hooks/useHabitsDB';
 import { Habit } from '@/types/habits';
 
 export default function HabitDetailPage() {
@@ -11,7 +11,7 @@ export default function HabitDetailPage() {
   const router = useRouter();
   const habitId = params.id as string;
   
-  const { habits, getHabitStats, isHabitCompletedOnDate, toggleHabitEntry } = useHabits();
+  const { habits, getHabitStats, isHabitCompletedOnDate, toggleHabitEntry } = useHabitsDB();
   const [habit, setHabit] = useState<Habit | null>(null);
   const [stats, setStats] = useState<{
     completedDays: number;

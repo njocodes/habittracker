@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Download, BarChart3, List, Grid } from 'lucide-react';
-import { useHabits } from '@/hooks/useHabits';
+import { useHabitsDB } from '@/hooks/useHabitsDB';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
@@ -21,9 +21,10 @@ export default function HomePage() {
     habits,
     isLoading,
     addHabit,
+    deleteHabit,
     toggleHabitEntry,
     isHabitCompletedOnDate,
-  } = useHabits();
+  } = useHabitsDB();
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -148,7 +149,7 @@ export default function HomePage() {
                   isCompleted={isCompletedToday}
                   onToggle={() => toggleHabitEntry(habit.id, today)}
                   onEdit={() => {}} // TODO: Implement edit
-                  onDelete={() => {}} // TODO: Implement delete
+                  onDelete={() => deleteHabit(habit.id)}
                   progressDots={progressDots}
                 />
               );
