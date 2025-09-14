@@ -1,16 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Download, BarChart3, List, Grid } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { useSession } from 'next-auth/react';
 import { format, subDays } from 'date-fns';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'today' | 'weekly' | 'overall'>('overall');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const {
     habits,
@@ -19,6 +24,13 @@ export default function HomePage() {
     toggleHabitEntry,
     isHabitCompletedOnDate,
   } = useHabits();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/login');
+    }
+  }, [status, router]);
 
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -47,15 +59,19 @@ export default function HomePage() {
     }
   };
 
-  if (isLoading) {
+  if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading habits...</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
+  }
+
+  if (!session?.user) {
+    return null; // Will redirect to login
   }
 
   return (
@@ -65,7 +81,10 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Habits</h1>
           <div className="flex items-center space-x-3">
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
               <Plus className="w-5 h-5 text-gray-600" />
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -74,6 +93,7 @@ export default function HomePage() {
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <BarChart3 className="w-5 h-5 text-gray-600" />
             </button>
+            <ProfileDropdown user={session.user} />
           </div>
         </div>
 
@@ -127,6 +147,8 @@ export default function HomePage() {
                   habit={habit}
                   isCompleted={isCompletedToday}
                   onToggle={() => toggleHabitEntry(habit.id, today)}
+                  onEdit={() => {}} // TODO: Implement edit
+                  onDelete={() => {}} // TODO: Implement delete
                   progressDots={progressDots}
                 />
               );
