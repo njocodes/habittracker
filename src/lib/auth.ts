@@ -1,4 +1,4 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthOptions } from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { sql } from './database';
 import bcrypt from 'bcryptjs';
