@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Habit Tracker",
-  description: "A beautiful and intuitive habit tracking app to build better daily routines",
+  description: "Eine schöne und intuitive Habit-Tracking-App für bessere tägliche Routinen",
 };
 
 export default function RootLayout({
