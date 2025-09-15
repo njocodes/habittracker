@@ -119,27 +119,65 @@ export function useHabits() {
   };
 
   // Get habit statistics
-  const getHabitStats = (): HabitStats => {
-    const today = new Date().toISOString().split('T')[0];
-    const completedToday = habits.filter(habit => 
-      isHabitCompletedOnDate(habit.id, today)
-    ).length;
+  const getHabitStats = (timeFilter: 'today' | 'week' | 'month' = 'week'): HabitStats => {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    // Get date range based on time filter
+    let dateRange: string[] = [];
+    switch (timeFilter) {
+      case 'today':
+        dateRange = [todayStr];
+        break;
+      case 'week':
+        dateRange = Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          return date.toISOString().split('T')[0];
+        });
+        break;
+      case 'month':
+        dateRange = Array.from({ length: 30 }, (_, i) => {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          return date.toISOString().split('T')[0];
+        });
+        break;
+    }
 
-    // Calculate completion rate based on the last 7 days
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      return date.toISOString().split('T')[0];
-    });
+    // Calculate completed habits for the current period
+    let completedInPeriod = 0;
+    if (timeFilter === 'today') {
+      completedInPeriod = habits.filter(habit =>
+        isHabitCompletedOnDate(habit.id, todayStr)
+      ).length;
+    } else {
+      // For week/month, count habits completed at least once in the period
+      habits.forEach(habit => {
+        const habitCreatedDate = new Date(habit.created_at).toISOString().split('T')[0];
+        const hasCompletedInPeriod = dateRange.some(date => 
+          date >= habitCreatedDate && isHabitCompletedOnDate(habit.id, date)
+        );
+        if (hasCompletedInPeriod) {
+          completedInPeriod++;
+        }
+      });
+    }
 
+    // Intelligent completion rate calculation
     let totalPossible = 0;
     let totalCompleted = 0;
 
     habits.forEach(habit => {
-      last7Days.forEach(date => {
-        totalPossible++;
-        if (isHabitCompletedOnDate(habit.id, date)) {
-          totalCompleted++;
+      const habitCreatedDate = new Date(habit.created_at).toISOString().split('T')[0];
+      
+      dateRange.forEach(date => {
+        // Only count if habit existed on this date
+        if (date >= habitCreatedDate) {
+          totalPossible++;
+          if (isHabitCompletedOnDate(habit.id, date)) {
+            totalCompleted++;
+          }
         }
       });
     });
@@ -148,7 +186,7 @@ export function useHabits() {
 
     return {
       total_habits: habits.length,
-      completed_today: completedToday,
+      completed_today: completedInPeriod,
       completion_rate: Math.round(completionRate),
       streak_days: 0, // Placeholder - streak calculation not implemented
       longest_streak: 0, // Placeholder - streak calculation not implemented

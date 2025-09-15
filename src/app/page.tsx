@@ -93,7 +93,7 @@ export default function HomePage() {
     return null;
   }
 
-  const stats = getHabitStats();
+  const stats = getHabitStats(timeFilter);
   const today = format(new Date(), 'yyyy-MM-dd');
 
   return (
@@ -106,7 +106,11 @@ export default function HomePage() {
             <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-300 mt-1">
               <span>{stats.total_habits} Gewohnheiten</span>
               <span>•</span>
-              <span>{stats.completed_today} heute erledigt</span>
+              <span>
+                {timeFilter === 'today' && `${stats.completed_today} heute erledigt`}
+                {timeFilter === 'week' && `${stats.completed_today} diese Woche erledigt`}
+                {timeFilter === 'month' && `${stats.completed_today} diesen Monat erledigt`}
+              </span>
             </div>
           </div>
           
@@ -119,7 +123,11 @@ export default function HomePage() {
         <div className="sm:hidden mt-3 flex items-center space-x-4 text-sm text-gray-300">
           <span>{stats.total_habits} Gewohnheiten</span>
           <span>•</span>
-          <span>{stats.completed_today} heute erledigt</span>
+          <span>
+            {timeFilter === 'today' && `${stats.completed_today} heute erledigt`}
+            {timeFilter === 'week' && `${stats.completed_today} diese Woche erledigt`}
+            {timeFilter === 'month' && `${stats.completed_today} diesen Monat erledigt`}
+          </span>
         </div>
 
         {/* Stats Cards */}
@@ -130,7 +138,11 @@ export default function HomePage() {
           </div>
           <div className="bg-black shadow-xl rounded-xl p-3 sm:p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
             <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stats.completed_today}</div>
-            <div className="text-xs sm:text-sm text-gray-400 font-medium">Heute erledigt</div>
+            <div className="text-xs sm:text-sm text-gray-400 font-medium">
+              {timeFilter === 'today' && 'Heute erledigt'}
+              {timeFilter === 'week' && 'Diese Woche erledigt'}
+              {timeFilter === 'month' && 'Diesen Monat erledigt'}
+            </div>
           </div>
           <div className="bg-black shadow-xl rounded-xl p-3 sm:p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
             <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stats.completion_rate}%</div>
