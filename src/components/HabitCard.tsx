@@ -177,6 +177,7 @@ export function HabitCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
+              console.log('Toggle button clicked for habit:', habit.id, 'isCompleted:', isCompleted);
               onToggle();
             }}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${

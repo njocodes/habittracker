@@ -79,6 +79,7 @@ export function useHabits() {
 
   // Toggle habit completion
   const toggleHabitEntry = async (habitId: string, date: string) => {
+    console.log('toggleHabitEntry called with:', { habitId, date });
     try {
       const response = await fetch(`/api/habits/${habitId}/entries`, {
         method: 'POST',
@@ -87,6 +88,8 @@ export function useHabits() {
         },
         body: JSON.stringify({ date }),
       });
+      
+      console.log('toggleHabitEntry response:', response.status, response.ok);
 
       if (response.ok) {
         const updatedEntry = await response.json();
