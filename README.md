@@ -220,32 +220,8 @@ src/
 └── types/             # TypeScript Types
 ```
 
-## 🤝 Contributing
-
-1. Fork das Repository
-2. Erstelle einen Feature Branch
-3. Committe deine Änderungen
-4. Push zum Branch
-5. Erstelle einen Pull Request
-
 ## 📄 Lizenz
 
 MIT License - Siehe [LICENSE](LICENSE) für Details.
 
-## 🙏 Danksagungen
 
-- **Next.js Team** für das fantastische Framework
-- **Supabase Team** für die großartige Backend-Lösung
-- **Tailwind CSS** für das Utility-First CSS Framework
-- **Vercel** für das Hosting und die Performance-Optimierungen
-
-## 📞 Support
-
-Bei Fragen oder Problemen:
-- **GitHub Issues**: [Issues](https://github.com/njocodes/habittracker/issues)
-- **Email**: [Deine Email]
-- **Twitter**: [@DeinTwitter]
-
----
-
-**Entwickelt mit ❤️ und extremen Performance-Optimierungen**
