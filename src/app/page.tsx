@@ -82,7 +82,7 @@ export default function HomePage() {
   const today = format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-black">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 px-4 py-4">
         <div className="flex items-center justify-between">
