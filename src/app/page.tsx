@@ -84,7 +84,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-black shadow-2xl px-4 py-4">
+      <header className="bg-black shadow-2xl px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-white">Habits</h1>
@@ -101,24 +101,24 @@ export default function HomePage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
-            <div className="text-2xl font-bold text-white">{stats.total_habits}</div>
-            <div className="text-sm text-gray-300">Gewohnheiten</div>
+        <div className="grid grid-cols-3 gap-6 mt-6">
+          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-3xl font-bold text-white mb-1">{stats.total_habits}</div>
+            <div className="text-sm text-gray-400 font-medium">Gewohnheiten</div>
           </div>
-          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
-            <div className="text-2xl font-bold text-white">{stats.completed_today}</div>
-            <div className="text-sm text-gray-300">Heute erledigt</div>
+          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-3xl font-bold text-white mb-1">{stats.completed_today}</div>
+            <div className="text-sm text-gray-400 font-medium">Heute erledigt</div>
           </div>
-          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
-            <div className="text-2xl font-bold text-white">{stats.completion_rate}%</div>
-            <div className="text-sm text-gray-300">Erfolgsrate</div>
+          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-3xl font-bold text-white mb-1">{stats.completion_rate}%</div>
+            <div className="text-sm text-gray-400 font-medium">Erfolgsrate</div>
           </div>
         </div>
 
         {/* View Controls */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex space-x-1 bg-black shadow-lg rounded-lg p-1 border border-gray-800">
+        <div className="flex items-center justify-between mt-8">
+          <div className="flex space-x-1 bg-black shadow-xl rounded-xl p-1 border border-gray-800">
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-md transition-colors ${
@@ -145,7 +145,7 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="flex space-x-1 bg-black shadow-lg rounded-lg p-1 border border-gray-800">
+          <div className="flex space-x-1 bg-black shadow-xl rounded-xl p-1 border border-gray-800">
             {(['today', 'week', 'month'] as TimeFilter[]).map((filter) => (
               <button
                 key={filter}
@@ -162,7 +162,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-6">
+      <main className="px-6 py-8">
         {habits.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

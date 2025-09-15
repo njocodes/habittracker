@@ -58,7 +58,7 @@ export function HabitCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-black rounded-lg shadow-lg border border-gray-800 p-4 hover:shadow-xl transition-shadow"
+      className="bg-black rounded-xl shadow-xl border border-gray-800 p-6 hover:shadow-2xl transition-all duration-300"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
