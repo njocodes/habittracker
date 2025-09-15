@@ -21,9 +21,9 @@ export const authOptions: any = {
 
         try {
           const users = await sql`
-            SELECT id, email, password_hash, name, image, share_code 
+            SELECT id, email, password_hash, full_name, avatar_url, share_code 
             FROM users 
-            WHERE email = ${credentials.email}
+            WHERE email = ${credentials.email} AND is_active = true
           `;
           
           const user = users[0];
@@ -32,8 +32,8 @@ export const authOptions: any = {
             return {
               id: user.id,
               email: user.email,
-              name: user.name,
-              image: user.image,
+              name: user.full_name,
+              image: user.avatar_url,
             };
           }
           

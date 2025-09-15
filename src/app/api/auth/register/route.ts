@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const newUser = await sql`
-      INSERT INTO users (email, password_hash, name, share_code)
-      VALUES (${email}, ${passwordHash}, ${name || null}, ${shareCode})
-      RETURNING id, email, name, share_code, created_at
+      INSERT INTO users (email, password_hash, full_name, share_code, is_active)
+      VALUES (${email}, ${passwordHash}, ${name || null}, ${shareCode}, true)
+      RETURNING id, email, full_name as name, share_code, created_at
     `;
 
     return NextResponse.json({
