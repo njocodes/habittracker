@@ -52,39 +52,39 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-6">
-      <div className="bg-black rounded-3xl shadow-2xl max-w-6xl w-full h-[800px] overflow-hidden border border-gray-900">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-6">
+      <div className="bg-black rounded-3xl shadow-2xl max-w-6xl w-full h-[95vh] sm:h-[800px] overflow-hidden border border-gray-900">
         {/* Header */}
-        <div className="flex items-center justify-between px-10 py-8 border-b border-gray-900">
+        <div className="flex items-center justify-between px-4 sm:px-10 py-4 sm:py-8 border-b border-gray-900">
           <div>
-            <h2 className="text-3xl font-bold text-white">Einstellungen</h2>
-            <p className="text-gray-500 mt-2">Verwalten Sie Ihre Präferenzen</p>
+            <h2 className="text-xl sm:text-3xl font-bold text-white">Einstellungen</h2>
+            <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Verwalten Sie Ihre Präferenzen</p>
           </div>
           <button
             onClick={onClose}
-            className="p-4 hover:bg-gray-900 rounded-2xl transition-all duration-200 group"
+            className="p-3 sm:p-4 hover:bg-gray-900 rounded-2xl transition-all duration-200 group"
           >
-            <X className="w-6 h-6 text-gray-400 group-hover:text-white" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-white" />
           </button>
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col sm:flex-row">
           {/* Sidebar */}
-          <div className="w-64 bg-gray-900/30 border-r border-gray-900">
-            <nav className="p-8 space-y-3">
+          <div className="w-full sm:w-64 bg-gray-900/30 border-b sm:border-b-0 sm:border-r border-gray-900">
+            <nav className="p-4 sm:p-8 space-y-2 sm:space-y-3">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
-                    className={`w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-base font-medium transition-all duration-300 ${
+                    className={`w-full flex items-center space-x-3 sm:space-x-4 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-medium transition-all duration-300 ${
                       activeTab === tab.id
                         ? 'bg-white text-black shadow-xl scale-105'
                         : 'text-gray-400 hover:bg-gray-800/40 hover:text-white hover:scale-102'
                     }`}
                   >
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -93,12 +93,12 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-10 overflow-y-auto">
+          <div className="flex-1 p-4 sm:p-10 overflow-y-auto">
             {activeTab === 'profile' && (
-              <div className="space-y-10">
+              <div className="space-y-6 sm:space-y-10">
                 <div>
-                  <h3 className="text-3xl font-bold text-white">Profil-Einstellungen</h3>
-                  <p className="text-gray-500 mt-3 text-lg">Verwalten Sie Ihre persönlichen Informationen</p>
+                  <h3 className="text-xl sm:text-3xl font-bold text-white">Profil-Einstellungen</h3>
+                  <p className="text-gray-500 mt-2 sm:mt-3 text-sm sm:text-lg">Verwalten Sie Ihre persönlichen Informationen</p>
                 </div>
                 
                 <div className="space-y-8">

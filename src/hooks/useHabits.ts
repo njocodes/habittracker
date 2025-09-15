@@ -93,17 +93,25 @@ export function useHabits() {
 
       if (response.ok) {
         const updatedEntry = await response.json();
+        console.log('Updated entry from API:', updatedEntry);
         setEntries(prev => {
           const existingIndex = prev.findIndex(
             entry => entry.habit_id === habitId && entry.date === date
           );
           
+          console.log('Existing entries:', prev);
+          console.log('Looking for habitId:', habitId, 'date:', date);
+          console.log('Found existing index:', existingIndex);
+          
           if (existingIndex >= 0) {
             const updated = [...prev];
             updated[existingIndex] = updatedEntry;
+            console.log('Updated entries array:', updated);
             return updated;
           } else {
-            return [...prev, updatedEntry];
+            const newEntries = [...prev, updatedEntry];
+            console.log('Added new entry, new entries array:', newEntries);
+            return newEntries;
           }
         });
       }
@@ -117,7 +125,9 @@ export function useHabits() {
     const entry = entries.find(
       entry => entry.habit_id === habitId && entry.date === date
     );
-    return entry ? entry.completed : false;
+    const isCompleted = entry ? entry.completed : false;
+    console.log('isHabitCompletedOnDate check:', { habitId, date, entry, isCompleted });
+    return isCompleted;
   };
 
   // Get habit statistics
