@@ -92,13 +92,14 @@ export function HabitCard({
     
     // Only allow left swipe
     if (deltaX < 0) {
-      setCurrentX(Math.max(deltaX, -80)); // Max swipe distance
+      const swipeProgress = Math.min(Math.abs(deltaX) / 80, 1);
+      setCurrentX(swipeProgress);
     }
   };
 
   const handleTouchEnd = () => {
-    if (currentX < -40) {
-      // Swipe threshold reached
+    if (currentX > 0.5) {
+      // Swipe threshold reached (50% of max swipe)
       setIsSwiped(true);
     } else {
       // Reset position
@@ -119,7 +120,8 @@ export function HabitCard({
   };
 
   const showActions = isHovered || isSwiped;
-  const translateX = isSwiped ? currentX : (isHovered ? -80 : 0);
+  const swipeProgress = isSwiped ? 1 : currentX;
+  const cardWidth = showActions ? `calc(100% - ${80 * swipeProgress}px)` : '100%';
 
   return (
     <div className="relative overflow-hidden">
@@ -154,7 +156,7 @@ export function HabitCard({
         animate={{ 
           opacity: 1, 
           y: 0,
-          x: translateX
+          width: cardWidth
         }}
         exit={{ opacity: 0, y: -20 }}
         onMouseEnter={handleMouseEnter}
@@ -163,7 +165,6 @@ export function HabitCard({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className="bg-black rounded-xl shadow-xl border border-gray-800 p-6 hover:shadow-2xl transition-all duration-300 relative z-10"
-        style={{ transform: `translateX(${translateX}px)` }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
@@ -176,7 +177,7 @@ export function HabitCard({
             </div>
           </div>
           
-          {/* Toggle Button - Always visible */}
+          {/* Toggle Button - Markiert Habit als erledigt/nicht erledigt */}
           <button
             onClick={onToggle}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -184,6 +185,7 @@ export function HabitCard({
                 ? `${colors.dark} text-white`
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
+            title={isCompleted ? 'Als nicht erledigt markieren' : 'Als erledigt markieren'}
           >
             {isCompleted ? (
               <Check className="w-5 h-5" />
