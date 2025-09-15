@@ -70,8 +70,8 @@ export function SettingsModal({ isOpen, onClose, user, onNameUpdate }: SettingsM
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-1 sm:p-2">
-      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[85vh] overflow-hidden border border-gray-800">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-2">
+      <div className="bg-black rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-gray-800">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
           <h2 className="text-lg font-semibold text-white">Einstellungen</h2>
@@ -83,24 +83,24 @@ export function SettingsModal({ isOpen, onClose, user, onNameUpdate }: SettingsM
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-row h-full">
           {/* Sidebar */}
-          <div className="w-full sm:w-40 bg-gray-900/30 border-b sm:border-b-0 sm:border-r border-gray-800">
-            <nav className="p-2 sm:p-3 space-y-1">
+          <div className="w-48 bg-gray-900/30 border-r border-gray-800 flex-shrink-0">
+            <nav className="p-4 space-y-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
-                    className={`w-full flex items-center space-x-2 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                       activeTab === tab.id
                         ? 'bg-white text-black shadow-sm'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-3 h-3" />
-                    <span className="truncate">{tab.label}</span>
+                    <Icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}
@@ -108,38 +108,39 @@ export function SettingsModal({ isOpen, onClose, user, onNameUpdate }: SettingsM
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-3 sm:p-4 overflow-y-auto">
+          <div className="flex-1 p-6 overflow-y-auto">
             {activeTab === 'profile' && (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <h3 className="text-base font-semibold text-white">Profil-Einstellungen</h3>
+                  <h3 className="text-xl font-semibold text-white">Profil-Einstellungen</h3>
+                  <p className="text-gray-400 mt-1">Verwalten Sie Ihre persönlichen Informationen</p>
                 </div>
-                
-                <div className="space-y-3">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Name
                     </label>
                     <input
                       type="text"
                       value={profileData.name}
                       onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-white focus:border-white text-sm"
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-white text-sm"
                       placeholder="Ihr Name"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       E-Mail
                     </label>
                     <input
                       type="email"
                       value={user.email || ''}
                       disabled
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-gray-500 cursor-not-allowed text-sm"
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 cursor-not-allowed text-sm"
                     />
-                    <p className="text-xs text-gray-500 mt-1">E-Mail kann nicht geändert werden</p>
+                    <p className="text-xs text-gray-500 mt-2">E-Mail kann nicht geändert werden</p>
                   </div>
                 </div>
               </div>
@@ -313,19 +314,24 @@ export function SettingsModal({ isOpen, onClose, user, onNameUpdate }: SettingsM
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 px-4 py-3 border-t border-gray-800 bg-gray-900/30">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 border border-gray-700 rounded hover:bg-gray-700 hover:text-white transition-colors"
-          >
-            Abbrechen
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-black bg-white rounded hover:bg-gray-100 transition-colors"
-          >
-            Speichern
-          </button>
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-800 bg-gray-900/30">
+          <div className="text-xs text-gray-500">
+            Änderungen werden automatisch gespeichert
+          </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onClose}
+              className="px-6 py-2 text-sm font-medium text-gray-300 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
+            >
+              Abbrechen
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-6 py-2 text-sm font-medium text-black bg-white rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              Speichern
+            </button>
+          </div>
         </div>
       </div>
     </div>
