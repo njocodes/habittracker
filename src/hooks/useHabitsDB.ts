@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Habit, HabitEntry, HabitStats } from '@/types/habits';
 import { useSession } from 'next-auth/react';
 
@@ -9,7 +9,7 @@ export function useHabitsDB() {
   const { data: session } = useSession();
 
   // Load habits from API
-  const loadHabits = async () => {
+  const loadHabits = useCallback(async () => {
     if (!session?.user?.id) return;
     
     try {
@@ -21,7 +21,7 @@ export function useHabitsDB() {
     } catch (error) {
       console.error('Error loading habits:', error);
     }
-  };
+  }, [session?.user?.id]);
 
   // Load entries for a specific habit
   const loadHabitEntries = async (habitId: string) => {

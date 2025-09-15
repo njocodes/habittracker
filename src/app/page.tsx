@@ -30,7 +30,6 @@ export default function HomePage() {
 
   const {
     habits,
-    entries,
     isLoading,
     addHabit,
     deleteHabit,

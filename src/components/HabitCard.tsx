@@ -37,7 +37,6 @@ export function HabitCard({
 
   const getNextDueText = () => {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
     
     switch (habit.target_frequency) {
       case 'daily':
@@ -45,7 +44,6 @@ export function HabitCard({
       case 'weekly':
         const nextMonday = new Date(today);
         nextMonday.setDate(today.getDate() + (1 + 7 - today.getDay()) % 7);
-        const nextMondayStr = nextMonday.toISOString().split('T')[0];
         return isCompleted ? '✅ Diese Woche erledigt' : `📅 Fällig bis ${nextMonday.toLocaleDateString('de-DE', { weekday: 'long' })}`;
       case 'custom':
         const days = habit.target_count || 1;
@@ -114,7 +112,6 @@ export function HabitCard({
   };
 
   const showActions = isClicked || isSwiped;
-  const swipeProgress = isSwiped ? 1 : currentX;
   const cardWidth = showActions ? `calc(100% - 80px)` : '100%';
 
   return (

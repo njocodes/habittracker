@@ -188,7 +188,7 @@ export function useHabits() {
     } else {
       setIsLoading(false);
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, loadHabits, loadEntries]);
 
   return {
     habits,
