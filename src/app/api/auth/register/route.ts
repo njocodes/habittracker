@@ -80,10 +80,13 @@ export async function POST(request: NextRequest) {
     console.error('Error stack:', error.stack);
     console.error('Full error object:', error);
     
+    // Return more detailed error for debugging
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        message: error.message,
+        type: error.constructor.name,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     );

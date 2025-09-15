@@ -47,7 +47,8 @@ export default function LoginPage() {
           }
         } else {
           const errorData = await response.json();
-          setError(errorData.error || 'Registrierung fehlgeschlagen');
+          console.error('Registration error:', errorData);
+          setError(errorData.message || errorData.error || 'Registrierung fehlgeschlagen');
         }
       } else {
         // Login existing user
@@ -102,7 +103,7 @@ export default function LoginPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white bg-black placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white bg-black placeholder-gray-400 autofill:bg-black autofill:text-white"
                   placeholder="Dein Name"
                 />
               </div>
