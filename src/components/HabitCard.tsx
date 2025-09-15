@@ -117,8 +117,6 @@ export function HabitCard({
   const showActions = isClicked || isSwiped;
   const swipeProgress = isSwiped ? 1 : currentX;
   const cardWidth = showActions ? `calc(100% - 80px)` : '100%';
-  
-  console.log('HabitCard state:', { isClicked, isSwiped, showActions, cardWidth });
 
   return (
     <div className="relative overflow-hidden">
@@ -177,7 +175,8 @@ export function HabitCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              console.log('Toggle button clicked for habit:', habit.id, 'isCompleted:', isCompleted);
+              console.log('🔘 Toggle button clicked for habit:', habit.id, 'isCompleted:', isCompleted);
+              console.log('🔘 onToggle function:', onToggle);
               onToggle();
             }}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
