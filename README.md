@@ -31,7 +31,7 @@ Ein hochmodernes, extrem optimiertes Habit Tracker System mit Next.js 15, TypeSc
 
 ## 🚀 Live Demo
 
-**Teste die App online**: [https://habittracker.vercel.app](https://habit.njo.codes)
+**Teste die App online**: [https://habit.njo.codes](https://habit.njo.codes)
 
 ## 🛠️ Installation & Setup
 
