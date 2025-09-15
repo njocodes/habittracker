@@ -5,11 +5,20 @@ import { neon } from '@neondatabase/serverless';
 // Database URL from environment variables
 const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL_NO_SSL || process.env.POSTGRES_URL;
 
+console.log('🔍 Database connection check:');
+console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+console.log('POSTGRES_URL_NO_SSL exists:', !!process.env.POSTGRES_URL_NO_SSL);
+console.log('POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
+console.log('Final database URL:', databaseUrl ? 'Found' : 'Not found');
+
 if (!databaseUrl) {
+  console.error('❌ Database URL not found in environment variables');
   throw new Error('Database URL not found in environment variables');
 }
 
+console.log('✅ Database URL found, initializing connection...');
 export const sql = neon(databaseUrl);
+console.log('✅ Database connection initialized');
 
 // Database initialization function
 export async function initDatabase() {
