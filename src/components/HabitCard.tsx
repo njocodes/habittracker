@@ -124,7 +124,9 @@ export function HabitCard({
   return (
     <div className="relative overflow-hidden">
       {/* Action Buttons - Hidden behind card */}
-      <div className="absolute right-0 top-0 h-full w-20 bg-gray-900 rounded-xl flex items-center justify-center space-x-2 pr-2">
+      <div className={`absolute right-0 top-0 h-full w-20 bg-gray-900 rounded-xl flex items-center justify-center space-x-2 pr-2 transition-opacity duration-300 ${
+        showActions ? 'opacity-100' : 'opacity-0'
+      }`}>
         <button
           onClick={onEdit}
           className="p-2 hover:bg-gray-800 rounded-lg transition-colors"

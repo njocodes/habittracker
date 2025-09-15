@@ -103,7 +103,7 @@ export default function LoginPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white bg-black placeholder-gray-400 autofill:bg-black autofill:text-white"
+                  className="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring-2 focus:ring-white focus:border-white text-white bg-black placeholder-gray-400 autofill:bg-black autofill:text-white"
                   placeholder="Dein Name"
                 />
               </div>
@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full bg-white text-black py-3 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {isLoading ? 'Lädt...' : (isSignUp ? 'Registrieren' : 'Anmelden')}
             </button>
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 setIsSignUp(!isSignUp);
                 setError('');
               }}
-              className="text-blue-400 hover:text-blue-300 transition-colors text-sm font-medium"
+              className="text-white hover:text-gray-300 transition-colors text-sm font-medium"
             >
               {isSignUp 
                 ? 'Bereits ein Konto? Hier anmelden'

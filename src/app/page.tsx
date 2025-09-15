@@ -183,7 +183,7 @@ export default function HomePage() {
             <p className="text-gray-300 mb-6">Starte deine Reise zu besseren Gewohnheiten</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+              className="bg-white text-black px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
             >
               Erste Gewohnheit hinzufügen
             </button>
@@ -232,7 +232,7 @@ export default function HomePage() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsAddModalOpen(true)}
-          className="fixed bottom-6 right-6 bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center z-40"
+          className="fixed bottom-6 right-6 bg-white text-black w-14 h-14 rounded-full shadow-lg hover:bg-gray-200 transition-colors flex items-center justify-center z-40"
         >
           <Plus className="w-6 h-6" />
         </motion.button>

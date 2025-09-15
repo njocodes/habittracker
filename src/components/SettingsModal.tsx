@@ -77,7 +77,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       activeTab === tab.id
-                        ? 'bg-blue-900 text-blue-300'
+                        ? 'bg-white text-black'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
@@ -137,7 +137,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <button
                       onClick={() => updateSetting('notifications', 'dailyReminder', !settings.notifications.dailyReminder)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings.notifications.dailyReminder ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.notifications.dailyReminder ? 'bg-white' : 'bg-gray-600'
                       }`}
                     >
                       <span
@@ -156,7 +156,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <button
                       onClick={() => updateSetting('notifications', 'weeklySummary', !settings.notifications.weeklySummary)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings.notifications.weeklySummary ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.notifications.weeklySummary ? 'bg-white' : 'bg-gray-600'
                       }`}
                     >
                       <span
@@ -175,7 +175,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <button
                       onClick={() => updateSetting('notifications', 'streakReminders', !settings.notifications.streakReminders)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings.notifications.streakReminders ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.notifications.streakReminders ? 'bg-white' : 'bg-gray-600'
                       }`}
                     >
                       <span
@@ -213,7 +213,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                               value={option.value}
                               checked={settings.appearance.theme === option.value}
                               onChange={(e) => updateSetting('appearance', 'theme', e.target.value)}
-                              className="text-blue-600 "
+                              className="text-white "
                             />
                             <Icon className="w-4 h-4 text-gray-500" />
                             <span className="text-sm text-gray-700">{option.label}</span>
@@ -253,7 +253,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <button
                       onClick={() => updateSetting('privacy', 'shareProgress', !settings.privacy.shareProgress)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings.privacy.shareProgress ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.privacy.shareProgress ? 'bg-white' : 'bg-gray-600'
                       }`}
                     >
                       <span
@@ -272,7 +272,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <button
                       onClick={() => updateSetting('privacy', 'showInLeaderboard', !settings.privacy.showInLeaderboard)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings.privacy.showInLeaderboard ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.privacy.showInLeaderboard ? 'bg-white' : 'bg-gray-600'
                       }`}
                     >
                       <span
@@ -298,7 +298,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-black bg-white rounded-lg hover:bg-gray-200 transition-colors"
           >
             Speichern
           </button>
