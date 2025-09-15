@@ -10,6 +10,7 @@ import { Plus, Calendar, List, Grid } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';
+import { EditHabitModal } from '@/components/EditHabitModal';
 import { CalendarView } from '@/components/CalendarView';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { format, subDays } from 'date-fns';
@@ -23,12 +24,15 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<any>(null);
 
   const {
     habits,
     isLoading,
     addHabit,
     deleteHabit,
+    updateHabit,
     toggleHabitEntry,
     isHabitCompletedOnDate,
     getHabitStats,
@@ -212,7 +216,10 @@ export default function HomePage() {
                       habit={habit}
                       isCompleted={isCompletedToday}
                       onToggle={() => toggleHabitEntry(habit.id, today)}
-                      onEdit={() => {}} // TODO: Implement edit
+                      onEdit={() => {
+                        setEditingHabit(habit);
+                        setIsEditModalOpen(true);
+                      }}
                       onDelete={() => deleteHabit(habit.id)}
                       progressDots={progressDots}
                     />
@@ -243,6 +250,17 @@ export default function HomePage() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddHabit={addHabit}
+      />
+
+      {/* Edit Habit Modal */}
+      <EditHabitModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingHabit(null);
+        }}
+        onUpdateHabit={updateHabit}
+        habit={editingHabit}
       />
     </div>
   );

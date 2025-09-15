@@ -140,6 +140,30 @@ export function useHabits() {
     };
   };
 
+  // Update habit
+  const updateHabit = async (habitId: string, updatedHabit: Partial<Habit>) => {
+    try {
+      const response = await fetch(`/api/habits/${habitId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedHabit),
+      });
+
+      if (response.ok) {
+        const updated = await response.json();
+        setHabits(prev => prev.map(habit => 
+          habit.id === habitId ? { ...habit, ...updated } : habit
+        ));
+      } else {
+        console.error('Failed to update habit');
+      }
+    } catch (error) {
+      console.error('Error updating habit:', error);
+    }
+  };
+
   // Load data when session changes
   useEffect(() => {
     if (session?.user?.id) {
@@ -157,6 +181,7 @@ export function useHabits() {
     isLoading,
     addHabit,
     deleteHabit,
+    updateHabit,
     toggleHabitEntry,
     isHabitCompletedOnDate,
     getHabitStats,
