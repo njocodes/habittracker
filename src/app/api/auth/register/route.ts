@@ -7,6 +7,9 @@ import { sql, generateShareCode } from '@/lib/database';
 export async function POST(request: NextRequest) {
   try {
     console.log('🔍 Registration API called');
+    console.log('🔍 Environment check:');
+    console.log('- NODE_ENV:', process.env.NODE_ENV);
+    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
     
     const { email, password, name } = await request.json();
     console.log('📝 Registration data:', { email, name: name || 'not provided', passwordLength: password?.length || 0 });

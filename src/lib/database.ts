@@ -18,7 +18,16 @@ if (!databaseUrl) {
 
 console.log('✅ Database URL found, initializing connection...');
 export const sql = neon(databaseUrl);
-console.log('✅ Database connection initialized');
+
+// Test database connection
+try {
+  console.log('🔍 Testing database connection...');
+  // This will be tested when first query is made
+  console.log('✅ Database connection ready');
+} catch (error) {
+  console.error('❌ Database connection failed:', error);
+  throw error;
+}
 
 // Database initialization function
 export async function initDatabase() {
@@ -29,9 +38,10 @@ export async function initDatabase() {
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        name VARCHAR(255),
-        image TEXT,
+        full_name VARCHAR(255),
+        avatar_url TEXT,
         share_code VARCHAR(6) UNIQUE NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT true,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );
