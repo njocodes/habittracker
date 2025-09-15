@@ -139,8 +139,25 @@ export function useHabits() {
       isHabitCompletedOnDate(habit.id, today)
     ).length;
 
-    const totalCompleted = entries.filter(entry => entry.completed).length;
-    const totalPossible = habits.length * 30; // 30 days
+    // Calculate completion rate based on the last 7 days
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      return date.toISOString().split('T')[0];
+    });
+
+    let totalPossible = 0;
+    let totalCompleted = 0;
+
+    habits.forEach(habit => {
+      last7Days.forEach(date => {
+        totalPossible++;
+        if (isHabitCompletedOnDate(habit.id, date)) {
+          totalCompleted++;
+        }
+      });
+    });
+
     const completionRate = totalPossible > 0 ? (totalCompleted / totalPossible) * 100 : 0;
 
     return {
