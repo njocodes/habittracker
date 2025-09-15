@@ -124,7 +124,7 @@ export default function HomePage() {
         </div>
 
         {/* View Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-6 sm:mt-8 space-y-3 sm:space-y-0">
+        <div className="flex items-center justify-between mt-6 sm:mt-8">
           <div className="flex space-x-1 bg-black shadow-xl rounded-xl p-1 border border-gray-800">
             <button
               onClick={() => setViewMode('list')}
