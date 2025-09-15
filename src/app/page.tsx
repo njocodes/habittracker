@@ -64,7 +64,7 @@ export default function HomePage() {
       status[habit.id] = isHabitCompletedOnDate(habit.id, today);
     });
     return status;
-  }, [habits, entries, isHabitCompletedOnDate]);
+  }, [habits, isHabitCompletedOnDate]);
 
   const getDaysForTimeFilter = () => {
     switch (timeFilter) {
