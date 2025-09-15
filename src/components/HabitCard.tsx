@@ -110,12 +110,15 @@ export function HabitCard({
 
   // Click handler for desktop
   const handleCardClick = () => {
+    console.log('Card clicked, current isClicked:', isClicked);
     setIsClicked(!isClicked);
   };
 
   const showActions = isClicked || isSwiped;
   const swipeProgress = isSwiped ? 1 : currentX;
-  const cardWidth = showActions ? `calc(100% - ${80 * swipeProgress}px)` : '100%';
+  const cardWidth = showActions ? `calc(100% - 80px)` : '100%';
+  
+  console.log('HabitCard state:', { isClicked, isSwiped, showActions, cardWidth });
 
   return (
     <div className="relative overflow-hidden">
@@ -178,13 +181,13 @@ export function HabitCard({
             }}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
               isCompleted
-                ? `${colors.dark} text-white`
+                ? 'bg-green-600 text-white hover:bg-green-700'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
             title={isCompleted ? 'Als nicht erledigt markieren' : 'Als erledigt markieren'}
           >
             {isCompleted ? (
-              <Check className="w-5 h-5" />
+              <Check className="w-5 h-5 text-green-100" />
             ) : (
               <X className="w-5 h-5" />
             )}
