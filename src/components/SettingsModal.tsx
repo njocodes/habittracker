@@ -52,36 +52,39 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-800">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-black rounded-2xl shadow-2xl max-w-5xl w-full h-[700px] overflow-hidden border border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-xl font-semibold text-white">Einstellungen</h2>
+        <div className="flex items-center justify-between p-8 border-b border-gray-800">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Einstellungen</h2>
+            <p className="text-sm text-gray-400 mt-1">Verwalten Sie Ihre Präferenzen</p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+            className="p-3 hover:bg-gray-800 rounded-xl transition-colors"
           >
-            <X className="w-5 h-5 text-gray-300" />
+            <X className="w-6 h-6 text-gray-300" />
           </button>
         </div>
 
         <div className="flex">
           {/* Sidebar */}
-          <div className="w-48 bg-gray-900 border-r border-gray-800">
-            <nav className="p-4 space-y-1">
+          <div className="w-56 bg-gray-900/50 border-r border-gray-800">
+            <nav className="p-6 space-y-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                       activeTab === tab.id
-                        ? 'bg-white text-black'
-                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                        ? 'bg-white text-black shadow-lg'
+                        : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-5 h-5" />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -90,35 +93,38 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="flex-1 p-8 overflow-y-auto">
             {activeTab === 'profile' && (
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium text-gray-900">Profil-Einstellungen</h3>
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Profil-Einstellungen</h3>
+                  <p className="text-gray-400 mt-2">Verwalten Sie Ihre persönlichen Informationen</p>
+                </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white mb-3">
                       Name
                     </label>
                     <input
                       type="text"
                       value={user.name || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-white transition-all duration-200"
                       placeholder="Ihr Name"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white mb-3">
                       E-Mail
                     </label>
                     <input
                       type="email"
                       value={user.email || ''}
                       disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-gray-500 cursor-not-allowed"
                     />
-                    <p className="text-xs text-gray-500 mt-1">E-Mail kann nicht geändert werden</p>
+                    <p className="text-xs text-gray-400 mt-2">E-Mail kann nicht geändert werden</p>
                   </div>
                 </div>
               </div>
@@ -289,16 +295,16 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end space-x-4 p-8 border-t border-gray-800 bg-gray-900/30">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-6 py-3 text-sm font-medium text-white bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-700 transition-all duration-200"
           >
             Abbrechen
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-black bg-white rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 text-sm font-medium text-black bg-white rounded-xl hover:bg-gray-200 transition-all duration-200 shadow-lg"
           >
             Speichern
           </button>
