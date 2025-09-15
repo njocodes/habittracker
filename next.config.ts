@@ -11,78 +11,226 @@ const nextConfig: NextConfig = {
   // Output-Konfiguration für Vercel
   output: 'standalone',
   
-  // Experimentelle Features für bessere Performance
+  // Experimentelle Features für EXTREME Performance
   experimental: {
-    optimizePackageImports: ['lucide-react', 'next-auth'],
+    optimizePackageImports: ['lucide-react', 'next-auth', '@radix-ui/react-icons'],
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
   
+  // Compiler-Optimierungen
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+    styledComponents: true,
+  },
+  
+  // Performance-Optimierungen
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  swcMinify: true,
+  
   // Bundle-Optimierungen
-  webpack: (config, { isServer }) => {
+  webpack: (config, { dev, isServer }) => {
+    // EXTREME Performance Optimizations
+    
     // Tree shaking optimieren
-    config.optimization.usedExports = true
-    config.optimization.sideEffects = false
-
-    // Chunk splitting optimieren
+    config.optimization.usedExports = true;
+    config.optimization.sideEffects = false;
+    
+    // Advanced chunk splitting für bessere Performance
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        minSize: 20000,
-        maxSize: 244000,
+        minSize: 10000,
+        maxSize: 200000,
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
         cacheGroups: {
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             chunks: 'all',
             priority: 10,
-            maxSize: 200000,
+            enforce: true,
+            maxSize: 150000,
           },
           auth: {
             test: /[\\/]node_modules[\\/](next-auth|@auth)[\\/]/,
             name: 'auth',
             chunks: 'all',
             priority: 20,
+            enforce: true,
             maxSize: 100000,
           },
           ui: {
-            test: /[\\/]src[\\/]components[\\/]/,
+            test: /[\\/]node_modules[\\/](@radix-ui|lucide-react|@headlessui)[\\/]/,
             name: 'ui',
             chunks: 'all',
             priority: 15,
-            maxSize: 150000,
+            enforce: true,
+            maxSize: 120000,
+          },
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: 'react',
+            chunks: 'all',
+            priority: 25,
+            enforce: true,
+            maxSize: 100000,
+          },
+          next: {
+            test: /[\\/]node_modules[\\/]next[\\/]/,
+            name: 'next',
+            chunks: 'all',
+            priority: 30,
+            enforce: true,
+            maxSize: 200000,
           },
           hooks: {
             test: /[\\/]src[\\/]hooks[\\/]/,
             name: 'hooks',
             chunks: 'all',
-            priority: 12,
+            priority: 5,
+            enforce: true,
             maxSize: 50000,
           },
+          components: {
+            test: /[\\/]src[\\/]components[\\/]/,
+            name: 'components',
+            chunks: 'all',
+            priority: 5,
+            enforce: true,
+            maxSize: 100000,
+          },
         },
-      }
+      };
     }
 
-    // Weitere Optimierungen
-    config.optimization.minimize = true
-    config.optimization.concatenateModules = true
+    // Minimization und weitere Optimierungen
+    config.optimization.minimize = true;
+    config.optimization.concatenateModules = true;
+    config.optimization.mergeDuplicateChunks = true;
+    config.optimization.flagIncludedChunks = true;
+    config.optimization.providedExports = true;
+    config.optimization.occurrenceOrder = true;
+    config.optimization.realContentHash = true;
 
-    return config
+    // Module concatenation
+    config.optimization.moduleIds = 'deterministic';
+    config.optimization.chunkIds = 'deterministic';
+
+    // Performance hints
+    config.performance = {
+      hints: 'warning',
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000,
+    };
+
+    // Resolve optimizations
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname, 'src'),
+    };
+
+    // Production-spezifische Optimierungen
+    if (!dev) {
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
+    }
+
+    return config;
   },
   
-  // Aggressives Caching für Vercel-Optimierung
+  // Image-Optimierungen
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 31536000,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  
+  // Preload critical resources
+  async rewrites() {
+    return [
+      {
+        source: '/sw.js',
+        destination: '/sw.js',
+      },
+    ];
+  },
+  
+  // EXTREME Caching für Performance
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
           {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'require-corp',
           },
         ],
       },
       // Statische Assets - 1 Jahr Cache
       {
         source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=31536000',
+          },
+        ],
+      },
+      // Images - 1 Jahr Cache
+      {
+        source: '/_next/image(.*)',
         headers: [
           {
             key: 'Cache-Control',
@@ -96,7 +244,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=300, s-maxage=300',
+            value: 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
           },
           {
             key: 'CDN-Cache-Control',
@@ -110,7 +258,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=3600, s-maxage=3600',
+            value: 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
           },
           {
             key: 'CDN-Cache-Control',
