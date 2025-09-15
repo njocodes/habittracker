@@ -12,9 +12,10 @@ interface SettingsModalProps {
     name?: string | null;
     image?: string | null;
   };
+  onNameUpdate?: (newName: string) => void;
 }
 
-export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, user, onNameUpdate }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'notifications' | 'appearance' | 'privacy'>('profile');
   const [profileData, setProfileData] = useState({
     name: user.name || '',
@@ -50,6 +51,10 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
 
   const handleSave = async () => {
     try {
+      // Update the name in the parent component
+      if (onNameUpdate && profileData.name !== user.name) {
+        onNameUpdate(profileData.name);
+      }
       // TODO: Implement API call to save profile data and settings
       onClose();
     } catch (error) {
@@ -65,8 +70,8 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-2">
-      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden border border-gray-800">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-1 sm:p-2">
+      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[85vh] overflow-hidden border border-gray-800">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
           <h2 className="text-lg font-semibold text-white">Einstellungen</h2>
@@ -81,21 +86,21 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
         <div className="flex flex-col sm:flex-row">
           {/* Sidebar */}
           <div className="w-full sm:w-40 bg-gray-900/30 border-b sm:border-b-0 sm:border-r border-gray-800">
-            <nav className="p-3 space-y-1">
+            <nav className="p-2 sm:p-3 space-y-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
-                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded text-xs font-medium transition-colors ${
+                    className={`w-full flex items-center space-x-2 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
                       activeTab === tab.id
-                        ? 'bg-white text-black'
+                        ? 'bg-white text-black shadow-sm'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
                     <Icon className="w-3 h-3" />
-                    <span>{tab.label}</span>
+                    <span className="truncate">{tab.label}</span>
                   </button>
                 );
               })}
@@ -103,7 +108,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 p-3 sm:p-4 overflow-y-auto">
             {activeTab === 'profile' && (
               <div className="space-y-4">
                 <div>

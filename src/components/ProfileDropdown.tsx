@@ -19,6 +19,7 @@ interface ProfileDropdownProps {
 export function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [currentName, setCurrentName] = useState(user.name || '');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +41,10 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  const handleNameUpdate = (newName: string) => {
+    setCurrentName(newName);
   };
 
   return (
@@ -82,7 +87,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
               )}
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-white truncate">
-                  {user.name || 'Unnamed User'}
+                  {currentName || 'Unnamed User'}
                 </p>
                 <p className="text-sm text-gray-300 truncate">{user.email}</p>
               </div>
@@ -118,6 +123,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         user={user}
+        onNameUpdate={handleNameUpdate}
       />
     </div>
   );
