@@ -125,7 +125,7 @@ export function useHabits() {
   // Check if habit is completed on specific date
   const isHabitCompletedOnDate = (habitId: string, date: string): boolean => {
     const entry = entries.find(
-      entry => entry.habit_id === habitId && entry.date === date
+      entry => entry.habit_id === habitId && entry.date.startsWith(date)
     );
     const isCompleted = entry ? entry.completed : false;
     console.log('🔍 isHabitCompletedOnDate check:', { habitId, date, entry, isCompleted, totalEntries: entries.length });
