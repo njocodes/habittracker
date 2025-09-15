@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Support
+    url: https://github.com/njocodes/habittracker/discussions
+    about: Fragen und Diskussionen über das Projekt
+  - name: 📚 Documentation
+    url: https://github.com/njocodes/habittracker/wiki
+    about: Detaillierte Dokumentation und Anleitungen
+  - name: 🔒 Security Issue
+    url: https://github.com/njocodes/habittracker/security/advisories/new
+    about: Melde Sicherheitslücken privat

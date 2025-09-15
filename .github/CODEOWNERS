@@ -1,0 +1,27 @@
+# Global owners
+* @njocodes
+
+# Core application files
+/src/ @njocodes
+/package.json @njocodes
+/next.config.ts @njocodes
+/tsconfig.json @njocodes
+/tailwind.config.ts @njocodes
+
+# Configuration files
+/.github/ @njocodes
+/.vercel/ @njocodes
+/vercel.json @njocodes
+
+# Documentation
+/README.md @njocodes
+/CONTRIBUTING.md @njocodes
+/CHANGELOG.md @njocodes
+/SECURITY.md @njocodes
+
+# Dependencies
+/package-lock.json @njocodes
+/yarn.lock @njocodes
+
+# Environment files
+/.env.example @njocodes
