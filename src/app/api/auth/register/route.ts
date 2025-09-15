@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
     // Create user
     console.log('👤 Creating user in database...');
     const newUser = await sql`
-      INSERT INTO users (email, password_hash, full_name, share_code, is_active)
-      VALUES (${email}, ${passwordHash}, ${name || null}, ${shareCode}, true)
+      INSERT INTO users (email, password_hash, full_name, share_code)
+      VALUES (${email}, ${passwordHash}, ${name || null}, ${shareCode})
       RETURNING id, email, full_name as name, share_code, created_at
     `;
     console.log('✅ User created successfully:', newUser[0]);
