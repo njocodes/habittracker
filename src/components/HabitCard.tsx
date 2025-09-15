@@ -35,6 +35,28 @@ export function HabitCard({
     }
   };
 
+  const getNextDueText = () => {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    switch (habit.target_frequency) {
+      case 'daily':
+        return isCompleted ? '✅ Heute erledigt' : '📅 Heute fällig';
+      case 'weekly':
+        const nextMonday = new Date(today);
+        nextMonday.setDate(today.getDate() + (1 + 7 - today.getDay()) % 7);
+        const nextMondayStr = nextMonday.toISOString().split('T')[0];
+        return isCompleted ? '✅ Diese Woche erledigt' : `📅 Fällig bis ${nextMonday.toLocaleDateString('de-DE', { weekday: 'long' })}`;
+      case 'custom':
+        const days = habit.target_count || 1;
+        const nextDue = new Date(today);
+        nextDue.setDate(today.getDate() + days);
+        return isCompleted ? '✅ Erledigt' : `📅 Nächster Termin: ${nextDue.toLocaleDateString('de-DE')}`;
+      default:
+        return isCompleted ? '✅ Heute erledigt' : '📅 Heute fällig';
+    }
+  };
+
   const getHabitColor = () => {
     const colors: Record<string, { light: string; dark: string }> = {
       blue: { light: 'bg-blue-100', dark: 'bg-blue-500' },
@@ -121,20 +143,6 @@ export function HabitCard({
           <Trash2 className="w-4 h-4" />
         </button>
 
-        <button
-          onClick={onToggle}
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-            isCompleted
-              ? `${colors.dark} text-white`
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-          }`}
-        >
-          {isCompleted ? (
-            <Check className="w-4 h-4" />
-          ) : (
-            <X className="w-4 h-4" />
-          )}
-        </button>
       </div>
 
       {/* Main Card */}
@@ -162,8 +170,25 @@ export function HabitCard({
             <div>
               <h3 className="font-semibold text-white">{habit.name}</h3>
               <p className="text-sm text-gray-300">{getFrequencyText()}</p>
+              <p className="text-xs text-gray-400 mt-1">{getNextDueText()}</p>
             </div>
           </div>
+          
+          {/* Toggle Button - Always visible */}
+          <button
+            onClick={onToggle}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+              isCompleted
+                ? `${colors.dark} text-white`
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            {isCompleted ? (
+              <Check className="w-5 h-5" />
+            ) : (
+              <X className="w-5 h-5" />
+            )}
+          </button>
         </div>
 
       {/* Progress Dots */}
