@@ -62,16 +62,16 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+            className="bg-black rounded-lg shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-800"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Neue Gewohnheit</h2>
+            <div className="flex items-center justify-between p-6 border-b border-gray-800">
+              <h2 className="text-xl font-semibold text-white">Neue Gewohnheit</h2>
               <button
                 onClick={onClose}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1 hover:bg-gray-800 rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-300" />
               </button>
             </div>
 
@@ -79,14 +79,14 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Name *
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-800"
                   placeholder="z.B. 10.000 Schritte gehen"
                   required
                 />
@@ -94,13 +94,13 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Beschreibung
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-800"
                   placeholder="Optionale Beschreibung..."
                   rows={3}
                 />
@@ -108,7 +108,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
 
               {/* Icon */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Icon
                 </label>
                 <div className="grid grid-cols-8 gap-2">
@@ -119,8 +119,8 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                       onClick={() => setIcon(habitIcon)}
                       className={`w-10 h-10 rounded-lg border-2 transition-colors ${
                         icon === habitIcon
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-500 bg-blue-900/30'
+                          : 'border-gray-600 hover:border-gray-500'
                       }`}
                     >
                       <span className="text-lg">{habitIcon}</span>
@@ -131,7 +131,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
 
               {/* Color */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Farbe
                 </label>
                 <div className="flex space-x-2">
@@ -142,8 +142,8 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                       onClick={() => setColor(colorOption.name)}
                       className={`w-8 h-8 rounded-full border-2 transition-colors ${
                         color === colorOption.name
-                          ? 'border-gray-800'
-                          : 'border-gray-300'
+                          ? 'border-white'
+                          : 'border-gray-600'
                       } ${colorOption.class}`}
                       title={colorOption.label}
                     />
@@ -153,13 +153,13 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
 
               {/* Frequency */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Häufigkeit
                 </label>
                 <select
                   value={targetFrequency}
                   onChange={(e) => setTargetFrequency(e.target.value as 'daily' | 'weekly' | 'custom')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-800"
                 >
                   <option value="daily">Täglich</option>
                   <option value="weekly">Wöchentlich</option>
@@ -170,7 +170,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
               {/* Custom Frequency */}
               {targetFrequency === 'custom' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Alle X Tage
                   </label>
                   <input
@@ -178,7 +178,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                     min="1"
                     value={targetCount}
                     onChange={(e) => setTargetCount(parseInt(e.target.value) || 1)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-800"
                   />
                 </div>
               )}
@@ -188,7 +188,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
                 >
                   Abbrechen
                 </button>

@@ -65,10 +65,10 @@ export default function HomePage() {
 
   if (status === 'loading' || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Lädt...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Lädt...</p>
         </div>
       </div>
     );
@@ -84,7 +84,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700 px-4 py-4">
+      <header className="bg-black shadow-2xl px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-white">Habits</h1>
@@ -102,23 +102,23 @@ export default function HomePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4 mt-4">
-          <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3">
-            <div className="text-2xl font-bold text-blue-400">{stats.total_habits}</div>
-            <div className="text-sm text-blue-300">Gewohnheiten</div>
+          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
+            <div className="text-2xl font-bold text-white">{stats.total_habits}</div>
+            <div className="text-sm text-gray-300">Gewohnheiten</div>
           </div>
-          <div className="bg-green-900/30 border border-green-700 rounded-lg p-3">
-            <div className="text-2xl font-bold text-green-400">{stats.completed_today}</div>
-            <div className="text-sm text-green-300">Heute erledigt</div>
+          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
+            <div className="text-2xl font-bold text-white">{stats.completed_today}</div>
+            <div className="text-sm text-gray-300">Heute erledigt</div>
           </div>
-          <div className="bg-purple-900/30 border border-purple-700 rounded-lg p-3">
-            <div className="text-2xl font-bold text-purple-400">{stats.completion_rate}%</div>
-            <div className="text-sm text-purple-300">Erfolgsrate</div>
+          <div className="bg-black shadow-lg rounded-lg p-3 border border-gray-800">
+            <div className="text-2xl font-bold text-white">{stats.completion_rate}%</div>
+            <div className="text-sm text-gray-300">Erfolgsrate</div>
           </div>
         </div>
 
         {/* View Controls */}
         <div className="flex items-center justify-between mt-4">
-          <div className="flex space-x-1 bg-gray-700 rounded-lg p-1">
+          <div className="flex space-x-1 bg-black shadow-lg rounded-lg p-1 border border-gray-800">
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-md transition-colors ${
@@ -145,7 +145,7 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="flex space-x-1 bg-gray-700 rounded-lg p-1">
+          <div className="flex space-x-1 bg-black shadow-lg rounded-lg p-1 border border-gray-800">
             {(['today', 'week', 'month'] as TimeFilter[]).map((filter) => (
               <button
                 key={filter}
@@ -169,11 +169,11 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-12"
           >
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-black shadow-lg rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-800">
+              <Plus className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Noch keine Gewohnheiten</h3>
-            <p className="text-gray-500 mb-6">Starte deine Reise zu besseren Gewohnheiten</p>
+            <h3 className="text-lg font-medium text-white mb-2">Noch keine Gewohnheiten</h3>
+            <p className="text-gray-300 mb-6">Starte deine Reise zu besseren Gewohnheiten</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"

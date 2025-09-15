@@ -58,32 +58,32 @@ export function HabitCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+      className="bg-black rounded-lg shadow-lg border border-gray-800 p-4 hover:shadow-xl transition-shadow"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
           <span className="text-2xl">{habit.icon}</span>
           <div>
-            <h3 className="font-semibold text-gray-900">{habit.name}</h3>
-            <p className="text-sm text-gray-500">{getFrequencyText()}</p>
+            <h3 className="font-semibold text-white">{habit.name}</h3>
+            <p className="text-sm text-gray-300">{getFrequencyText()}</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={onEdit}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="p-1 hover:bg-gray-800 rounded transition-colors"
           >
-            <Edit className="w-4 h-4 text-gray-500" />
+            <Edit className="w-4 h-4 text-gray-300" />
           </button>
           
           <button
             onClick={handleDelete}
             className={`p-1 rounded transition-colors ${
               showDeleteConfirm
-                ? 'bg-red-100 text-red-600'
-                : 'hover:bg-gray-100 text-gray-500'
+                ? 'bg-red-900 text-red-300'
+                : 'hover:bg-gray-800 text-gray-300'
             }`}
           >
             <Trash2 className="w-4 h-4" />
@@ -94,7 +94,7 @@ export function HabitCard({
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               isCompleted
                 ? `${colors.dark} text-white`
-                : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
           >
             {isCompleted ? (
@@ -120,7 +120,7 @@ export function HabitCard({
 
       {/* Delete Confirmation */}
       {showDeleteConfirm && (
-        <div className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+        <div className="text-xs text-red-300 bg-red-900 px-2 py-1 rounded">
           Nochmal tippen zum Löschen
         </div>
       )}

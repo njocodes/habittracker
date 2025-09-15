@@ -35,23 +35,23 @@ export function CalendarView({ habits, isHabitCompletedOnDate, onToggleHabit }: 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div className="bg-black rounded-lg shadow-lg border border-gray-800 p-4">
       {/* Calendar Header */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={goToPreviousMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-white"
         >
           ←
         </button>
         
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-white">
           {format(currentDate, 'MMMM yyyy', { locale: de })}
         </h2>
         
         <button
           onClick={goToNextMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-white"
         >
           →
         </button>

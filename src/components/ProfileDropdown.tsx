@@ -45,7 +45,7 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
       {/* Profile Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="flex items-center space-x-2 p-2 hover:bg-gray-800 rounded-lg transition-colors"
       >
         {user.image ? (
           <img
@@ -58,14 +58,14 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
             <User className="w-4 h-4 text-white" />
           </div>
         )}
-        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-gray-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-black rounded-lg shadow-2xl border border-gray-800 py-2 z-50">
           {/* User Info */}
-          <div className="px-4 py-3 border-b border-gray-100">
+          <div className="px-4 py-3 border-b border-gray-800">
             <div className="flex items-center space-x-3">
               {user.image ? (
                 <img
@@ -79,24 +79,24 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">
+                <p className="font-medium text-white truncate">
                   {user.name || 'Unnamed User'}
                 </p>
-                <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                <p className="text-sm text-gray-300 truncate">{user.email}</p>
               </div>
             </div>
           </div>
 
           {/* Menu Items */}
           <div className="py-2">
-            <button className="flex items-center space-x-3 w-full text-left hover:bg-gray-50 px-4 py-2">
-              <Settings className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-700">Einstellungen</span>
+            <button className="flex items-center space-x-3 w-full text-left hover:bg-gray-800 px-4 py-2">
+              <Settings className="w-4 h-4 text-gray-300" />
+              <span className="text-gray-300">Einstellungen</span>
             </button>
 
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-3 w-full text-left hover:bg-red-50 px-4 py-2 text-red-600"
+              className="flex items-center space-x-3 w-full text-left hover:bg-red-900 px-4 py-2 text-red-300"
             >
               <LogOut className="w-4 h-4" />
               <span>Abmelden</span>
