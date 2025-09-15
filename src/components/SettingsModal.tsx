@@ -69,39 +69,36 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-6">
-      <div className="bg-black rounded-3xl shadow-2xl max-w-6xl w-full h-[95vh] sm:h-[800px] overflow-hidden border border-gray-900">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-2">
+      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden border border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-10 py-4 sm:py-8 border-b border-gray-900">
-          <div>
-            <h2 className="text-xl sm:text-3xl font-bold text-white">Einstellungen</h2>
-            <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Verwalten Sie Ihre Präferenzen</p>
-          </div>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+          <h2 className="text-lg font-semibold text-white">Einstellungen</h2>
           <button
             onClick={onClose}
-            className="p-3 sm:p-4 hover:bg-gray-900 rounded-2xl transition-all duration-200 group"
+            className="p-1 hover:bg-gray-800 rounded transition-colors"
           >
-            <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-white" />
+            <X className="w-4 h-4 text-gray-400 hover:text-white" />
           </button>
         </div>
 
         <div className="flex flex-col sm:flex-row">
           {/* Sidebar */}
-          <div className="w-full sm:w-64 bg-gray-900/30 border-b sm:border-b-0 sm:border-r border-gray-900">
-            <nav className="p-4 sm:p-8 space-y-2 sm:space-y-3">
+          <div className="w-full sm:w-40 bg-gray-900/30 border-b sm:border-b-0 sm:border-r border-gray-800">
+            <nav className="p-3 space-y-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
-                    className={`w-full flex items-center space-x-3 sm:space-x-4 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-medium transition-all duration-300 ${
+                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded text-xs font-medium transition-colors ${
                       activeTab === tab.id
-                        ? 'bg-white text-black shadow-xl scale-105'
-                        : 'text-gray-400 hover:bg-gray-800/40 hover:text-white hover:scale-102'
+                        ? 'bg-white text-black'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <Icon className="w-3 h-3" />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -110,39 +107,38 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-4 sm:p-10 overflow-y-auto">
+          <div className="flex-1 p-4 overflow-y-auto">
             {activeTab === 'profile' && (
-              <div className="space-y-6 sm:space-y-10">
+              <div className="space-y-4">
                 <div>
-                  <h3 className="text-xl sm:text-3xl font-bold text-white">Profil-Einstellungen</h3>
-                  <p className="text-gray-500 mt-2 sm:mt-3 text-sm sm:text-lg">Verwalten Sie Ihre persönlichen Informationen</p>
+                  <h3 className="text-base font-semibold text-white">Profil-Einstellungen</h3>
                 </div>
                 
-                <div className="space-y-8">
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-lg font-semibold text-white mb-4">
+                    <label className="block text-xs font-medium text-gray-300 mb-1">
                       Name
                     </label>
                     <input
                       type="text"
                       value={profileData.name}
                       onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-6 py-4 bg-gray-900 border border-gray-800 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-white transition-all duration-300 text-lg"
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-white focus:border-white text-sm"
                       placeholder="Ihr Name"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-lg font-semibold text-white mb-4">
+                    <label className="block text-xs font-medium text-gray-300 mb-1">
                       E-Mail
                     </label>
                     <input
                       type="email"
                       value={user.email || ''}
                       disabled
-                      className="w-full px-6 py-4 bg-gray-950 border border-gray-800 rounded-2xl text-gray-600 cursor-not-allowed text-lg"
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-gray-500 cursor-not-allowed text-sm"
                     />
-                    <p className="text-sm text-gray-500 mt-3">E-Mail kann nicht geändert werden</p>
+                    <p className="text-xs text-gray-500 mt-1">E-Mail kann nicht geändert werden</p>
                   </div>
                 </div>
               </div>
@@ -316,16 +312,16 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-6 px-10 py-8 border-t border-gray-900 bg-gray-950/50">
+        <div className="flex items-center justify-end space-x-3 px-4 py-3 border-t border-gray-800 bg-gray-900/30">
           <button
             onClick={onClose}
-            className="px-8 py-4 text-lg font-semibold text-gray-300 bg-gray-900 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:text-white transition-all duration-300"
+            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 border border-gray-700 rounded hover:bg-gray-700 hover:text-white transition-colors"
           >
             Abbrechen
           </button>
           <button
             onClick={handleSave}
-            className="px-8 py-4 text-lg font-semibold text-black bg-white rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl"
+            className="px-4 py-2 text-sm font-medium text-black bg-white rounded hover:bg-gray-100 transition-colors"
           >
             Speichern
           </button>
