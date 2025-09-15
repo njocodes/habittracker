@@ -25,8 +25,10 @@ export async function GET() {
 
     return NextResponse.json(entries, {
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
         'CDN-Cache-Control': 'max-age=300',
+        'Vercel-CDN-Cache-Control': 'max-age=300',
+        'Edge-Cache-Tag': `user-${session.user.id}`,
       }
     });
 

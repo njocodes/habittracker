@@ -26,28 +26,44 @@ const nextConfig: NextConfig = {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             chunks: 'all',
             priority: 10,
+            maxSize: 200000,
           },
           auth: {
             test: /[\\/]node_modules[\\/](next-auth|@auth)[\\/]/,
             name: 'auth',
             chunks: 'all',
             priority: 20,
+            maxSize: 100000,
           },
           ui: {
             test: /[\\/]src[\\/]components[\\/]/,
             name: 'ui',
             chunks: 'all',
             priority: 15,
+            maxSize: 150000,
+          },
+          hooks: {
+            test: /[\\/]src[\\/]hooks[\\/]/,
+            name: 'hooks',
+            chunks: 'all',
+            priority: 12,
+            maxSize: 50000,
           },
         },
       }
     }
+
+    // Weitere Optimierungen
+    config.optimization.minimize = true
+    config.optimization.concatenateModules = true
 
     return config
   },
