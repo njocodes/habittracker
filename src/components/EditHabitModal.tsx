@@ -69,24 +69,24 @@ export function EditHabitModal({ isOpen, onClose, onUpdateHabit, habit }: EditHa
   if (!isOpen || !habit) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-black rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-900">
+    <div className="fixed inset-0 bg-black/95 backdrop-blur-lg flex items-center justify-center z-50 p-6">
+      <div className="bg-black rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden border border-gray-900">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-900">
+        <div className="flex items-center justify-between px-10 py-8 border-b border-gray-900">
           <div>
-            <h2 className="text-2xl font-bold text-white">Habit bearbeiten</h2>
-            <p className="text-gray-500 mt-1">Bearbeiten Sie Ihre Gewohnheit</p>
+            <h2 className="text-3xl font-bold text-white">Habit bearbeiten</h2>
+            <p className="text-gray-500 mt-2 text-lg">Bearbeiten Sie Ihre Gewohnheit</p>
           </div>
           <button
             onClick={onClose}
-            className="p-3 hover:bg-gray-900 rounded-2xl transition-all duration-200 group"
+            className="p-4 hover:bg-gray-900 rounded-2xl transition-all duration-200 group"
           >
             <X className="w-6 h-6 text-gray-400 group-hover:text-white" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="p-10 space-y-10">
           {/* Name */}
           <div>
             <label className="block text-lg font-semibold text-white mb-4">
@@ -118,19 +118,19 @@ export function EditHabitModal({ isOpen, onClose, onUpdateHabit, habit }: EditHa
 
           {/* Icon Selection */}
           <div>
-            <label className="block text-lg font-semibold text-white mb-4">
+            <label className="block text-lg font-semibold text-white mb-6">
               Icon
             </label>
-            <div className="grid grid-cols-6 gap-3">
+            <div className="grid grid-cols-6 gap-4">
               {iconOptions.map((icon) => (
                 <button
                   key={icon}
                   type="button"
                   onClick={() => setHabitIcon(icon)}
-                  className={`p-4 rounded-2xl text-2xl transition-all duration-200 ${
+                  className={`p-5 rounded-2xl text-3xl transition-all duration-300 ${
                     icon === habitIcon
-                      ? 'bg-white text-black scale-110'
-                      : 'bg-gray-900 hover:bg-gray-800 border border-gray-800'
+                      ? 'bg-white text-black scale-110 shadow-xl'
+                      : 'bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:scale-105'
                   }`}
                 >
                   {icon}
@@ -141,23 +141,23 @@ export function EditHabitModal({ isOpen, onClose, onUpdateHabit, habit }: EditHa
 
           {/* Color Selection */}
           <div>
-            <label className="block text-lg font-semibold text-white mb-4">
+            <label className="block text-lg font-semibold text-white mb-6">
               Farbe
             </label>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-4">
               {colorOptions.map((color) => (
                 <button
                   key={color.name}
                   type="button"
                   onClick={() => setColorOption(color.name)}
-                  className={`p-4 rounded-2xl transition-all duration-200 ${
+                  className={`p-5 rounded-2xl transition-all duration-300 ${
                     color.name === colorOption
-                      ? 'ring-4 ring-white scale-110'
-                      : 'hover:scale-105'
+                      ? 'ring-4 ring-white scale-110 shadow-xl bg-gray-900'
+                      : 'hover:scale-105 bg-gray-900/50 hover:bg-gray-900'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-full ${color.class} mx-auto`} />
-                  <span className="text-white text-sm mt-2 block">{color.display}</span>
+                  <div className={`w-10 h-10 rounded-full ${color.class} mx-auto shadow-lg`} />
+                  <span className="text-white text-sm mt-3 block font-medium">{color.display}</span>
                 </button>
               ))}
             </div>
@@ -196,18 +196,18 @@ export function EditHabitModal({ isOpen, onClose, onUpdateHabit, habit }: EditHa
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end space-x-4 pt-6">
+          <div className="flex items-center justify-end space-x-6 pt-8 border-t border-gray-900">
             <button
               type="button"
               onClick={onClose}
-              className="px-8 py-4 text-lg font-semibold text-gray-300 bg-gray-900 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:text-white transition-all duration-300"
+              className="px-10 py-4 text-lg font-semibold text-gray-300 bg-gray-900 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:text-white transition-all duration-300"
             >
               Abbrechen
             </button>
             <button
               type="submit"
               disabled={isLoading || !habitName.trim()}
-              className="px-8 py-4 text-lg font-semibold text-black bg-white rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-10 py-4 text-lg font-semibold text-black bg-white rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-3"
             >
               {isLoading ? (
                 <>
