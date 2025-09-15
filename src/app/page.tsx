@@ -82,13 +82,13 @@ export default function HomePage() {
   const today = format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4">
+      <header className="bg-gray-800 border-b border-gray-700 px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-gray-900">Habits</h1>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <h1 className="text-2xl font-bold text-white">Habits</h1>
+            <div className="flex items-center space-x-2 text-sm text-gray-300">
               <span>{stats.total_habits} Gewohnheiten</span>
               <span>•</span>
               <span>{stats.completed_today} heute erledigt</span>
@@ -102,27 +102,27 @@ export default function HomePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4 mt-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-blue-600">{stats.total_habits}</div>
-            <div className="text-sm text-blue-700">Gewohnheiten</div>
+          <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3">
+            <div className="text-2xl font-bold text-blue-400">{stats.total_habits}</div>
+            <div className="text-sm text-blue-300">Gewohnheiten</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-green-600">{stats.completed_today}</div>
-            <div className="text-sm text-green-700">Heute erledigt</div>
+          <div className="bg-green-900/30 border border-green-700 rounded-lg p-3">
+            <div className="text-2xl font-bold text-green-400">{stats.completed_today}</div>
+            <div className="text-sm text-green-300">Heute erledigt</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-purple-600">{stats.completion_rate}%</div>
-            <div className="text-sm text-purple-700">Erfolgsrate</div>
+          <div className="bg-purple-900/30 border border-purple-700 rounded-lg p-3">
+            <div className="text-2xl font-bold text-purple-400">{stats.completion_rate}%</div>
+            <div className="text-sm text-purple-300">Erfolgsrate</div>
           </div>
         </div>
 
         {/* View Controls */}
         <div className="flex items-center justify-between mt-4">
-          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex space-x-1 bg-gray-700 rounded-lg p-1">
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+                viewMode === 'list' ? 'bg-gray-600 shadow-sm text-white' : 'hover:bg-gray-600 text-gray-300'
               }`}
             >
               <List className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function HomePage() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+                viewMode === 'grid' ? 'bg-gray-600 shadow-sm text-white' : 'hover:bg-gray-600 text-gray-300'
               }`}
             >
               <Grid className="w-4 h-4" />
@@ -138,20 +138,20 @@ export default function HomePage() {
             <button
               onClick={() => setViewMode('calendar')}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === 'calendar' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+                viewMode === 'calendar' ? 'bg-gray-600 shadow-sm text-white' : 'hover:bg-gray-600 text-gray-300'
               }`}
             >
               <Calendar className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex space-x-1 bg-gray-700 rounded-lg p-1">
             {(['today', 'week', 'month'] as TimeFilter[]).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setTimeFilter(filter)}
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                  timeFilter === filter ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+                  timeFilter === filter ? 'bg-gray-600 shadow-sm text-white' : 'hover:bg-gray-600 text-gray-300'
                 }`}
               >
                 {filter === 'today' ? 'Heute' : filter === 'week' ? 'Woche' : 'Monat'}

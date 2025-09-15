@@ -71,19 +71,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-white mb-2">
               {isSignUp ? 'Registrieren' : 'Anmelden'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               {isSignUp 
                 ? 'Erstelle dein Konto für den Habit Tracker'
                 : 'Willkommen zurück bei deinem Habit Tracker'
@@ -95,49 +95,49 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Name
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-700"
                   placeholder="Dein Name"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 E-Mail
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-700"
                 placeholder="deine@email.com"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Passwort
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-blue-400 text-gray-900"
+                className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:border-blue-400 text-white bg-gray-700"
                 placeholder="Dein Passwort"
                 required
               />
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
@@ -145,7 +145,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Lädt...' : (isSignUp ? 'Registrieren' : 'Anmelden')}
             </button>
@@ -158,7 +158,7 @@ export default function LoginPage() {
                 setIsSignUp(!isSignUp);
                 setError('');
               }}
-              className="text-blue-500 hover:text-blue-600 transition-colors"
+              className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               {isSignUp 
                 ? 'Bereits ein Konto? Hier anmelden'

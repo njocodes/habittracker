@@ -2,19 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS Variables */
+/* Custom CSS Variables - Dark Theme */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 17, 24, 39;
 }
 
 /* Base Styles */
@@ -38,24 +30,25 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  min-height: 100vh;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Dark Theme */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #1f2937;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #4b5563;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #6b7280;
 }
 
 /* Animation Classes */
@@ -94,45 +87,45 @@ body {
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
 }
 
-/* Button Styles */
+/* Button Styles - Dark Theme */
 .btn-primary {
-  @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors focus-ring;
+  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors focus-ring;
 }
 
 .btn-secondary {
-  @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors focus-ring;
+  @apply bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors focus-ring;
 }
 
 .btn-danger {
-  @apply bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors focus-ring;
+  @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors focus-ring;
 }
 
-/* Card Styles */
+/* Card Styles - Dark Theme */
 .card {
-  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+  @apply bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-4;
 }
 
 .card-hover {
-  @apply card hover:shadow-md transition-shadow;
+  @apply card hover:shadow-lg hover:shadow-gray-900/50 transition-shadow;
 }
 
-/* Input Styles */
+/* Input Styles - Dark Theme */
 .input {
-  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900;
+  @apply w-full px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-white bg-gray-800;
 }
 
-/* Modal Styles */
+/* Modal Styles - Dark Theme */
 .modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+  @apply fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50;
 }
 
 .modal-content {
-  @apply bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto;
+  @apply bg-gray-800 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-700;
 }
 
-/* Loading Spinner */
+/* Loading Spinner - Dark Theme */
 .spinner {
-  @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-500;
+  @apply animate-spin rounded-full border-2 border-gray-600 border-t-blue-500;
 }
 
 /* Responsive Grid */
