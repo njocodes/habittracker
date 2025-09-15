@@ -64,6 +64,7 @@ export async function POST(
       `;
     }
 
+    console.log('API returning entry:', entry[0]);
     return NextResponse.json(entry[0]);
 
   } catch (error) {
