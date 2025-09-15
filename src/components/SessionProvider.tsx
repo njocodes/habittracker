@@ -1,11 +1,18 @@
+// Session Provider Component - Komplett neu implementiert
+
 'use client';
 
 import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
+import { ReactNode } from 'react';
 
 interface SessionProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function SessionProvider({ children }: SessionProviderProps) {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>;
+  return (
+    <NextAuthSessionProvider>
+      {children}
+    </NextAuthSessionProvider>
+  );
 }

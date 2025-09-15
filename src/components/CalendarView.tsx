@@ -1,164 +1,134 @@
+// Calendar View Component - Komplett neu implementiert
+
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Habit } from '@/types/habits';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { CalendarViewProps } from '@/types/habits';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
 
-interface CalendarViewProps {
-  habits: Habit[];
-  isHabitCompletedOnDate: (habitId: string, date: string) => boolean;
-  onToggleHabit: (habitId: string, date: string) => void;
-}
-
 export function CalendarView({ habits, isHabitCompletedOnDate, onToggleHabit }: CalendarViewProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-
-  const getCompletionStatus = (date: Date) => {
-    const dateStr = format(date, 'yyyy-MM-dd');
-    const completedHabits = habits.filter(habit => 
-      isHabitCompletedOnDate(habit.id, dateStr)
-    );
-    return {
-      total: habits.length,
-      completed: completedHabits.length,
-      percentage: habits.length > 0 ? (completedHabits.length / habits.length) * 100 : 0
-    };
+  const goToPreviousMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
-  const getDayColor = (completion: { percentage: number }) => {
-    if (completion.percentage === 100) return 'bg-green-500';
-    if (completion.percentage >= 75) return 'bg-green-400';
-    if (completion.percentage >= 50) return 'bg-yellow-400';
-    if (completion.percentage >= 25) return 'bg-orange-400';
-    if (completion.percentage > 0) return 'bg-red-400';
-    return 'bg-gray-200';
+  const goToNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+
+  const getHabitColor = (color: string) => {
+    const colors: Record<string, string> = {
+      blue: 'bg-blue-500',
+      green: 'bg-green-500',
+      purple: 'bg-purple-500',
+      orange: 'bg-orange-500',
+      red: 'bg-red-500',
+      yellow: 'bg-yellow-500',
+    };
+    return colors[color] || colors.blue;
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
       {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">
-          {format(currentMonth, 'MMMM yyyy', { locale: de })}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={goToPreviousMonth}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          ←
+        </button>
+        
+        <h2 className="text-lg font-semibold text-gray-900">
+          {format(currentDate, 'MMMM yyyy', { locale: de })}
         </h2>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={prevMonth}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <button
-            onClick={() => setCurrentMonth(new Date())}
-            className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors"
-          >
-            Heute
-          </button>
-          <button
-            onClick={nextMonth}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
+        
+        <button
+          onClick={goToNextMonth}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          →
+        </button>
       </div>
 
-      {/* Day Headers */}
+      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1 mb-2">
-        {['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'].map(day => (
+        {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
           <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
             {day}
           </div>
         ))}
       </div>
 
-      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for days before month start */}
-        {Array.from({ length: monthStart.getDay() }).map((_, index) => (
-          <div key={`empty-${index}`} className="h-12" />
-        ))}
-
-        {/* Days of the month */}
-        {days.map(day => {
-          const completion = getCompletionStatus(day);
-          const isToday = isSameDay(day, new Date());
-          const isCurrentMonth = isSameMonth(day, currentMonth);
+        {days.map((day) => {
+          const dayString = format(day, 'yyyy-MM-dd');
+          const isCurrentMonth = isSameMonth(day, currentDate);
+          const isCurrentDay = isToday(day);
 
           return (
             <div
-              key={day.toISOString()}
+              key={dayString}
               className={`
-                h-12 relative cursor-pointer rounded-lg transition-all duration-200
-                ${isCurrentMonth ? 'hover:bg-gray-50' : ''}
-                ${isToday ? 'ring-2 ring-blue-500' : ''}
+                min-h-[60px] p-1 border border-gray-100
+                ${isCurrentMonth ? 'bg-white' : 'bg-gray-50'}
+                ${isCurrentDay ? 'bg-blue-50 border-blue-200' : ''}
               `}
-              onClick={() => {
-                if (isCurrentMonth) {
-                  habits.forEach(habit => {
-                    if (!isHabitCompletedOnDate(habit.id, format(day, 'yyyy-MM-dd'))) {
-                      onToggleHabit(habit.id, format(day, 'yyyy-MM-dd'));
-                    }
-                  });
-                }
-              }}
             >
-              <div className="flex items-center justify-center h-full">
-                <span className={`text-sm font-medium ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}`}>
+              <div className="flex flex-col h-full">
+                <div className={`
+                  text-sm font-medium mb-1
+                  ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}
+                  ${isCurrentDay ? 'text-blue-600' : ''}
+                `}>
                   {format(day, 'd')}
-                </span>
-              </div>
-              
-              {/* Completion indicator */}
-              {isCurrentMonth && completion.total > 0 && (
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-                  <div className={`w-2 h-2 rounded-full ${getDayColor(completion)}`} />
                 </div>
-              )}
+                
+                <div className="flex-1 flex flex-col space-y-1">
+                  {habits.map((habit) => {
+                    const isCompleted = isHabitCompletedOnDate(habit.id, dayString);
+                    
+                    return (
+                      <button
+                        key={habit.id}
+                        onClick={() => onToggleHabit(habit.id, dayString)}
+                        className={`
+                          w-full h-4 rounded text-xs flex items-center justify-center
+                          transition-all hover:scale-105
+                          ${isCompleted 
+                            ? `${getHabitColor(habit.color)} text-white` 
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                          }
+                        `}
+                        title={`${habit.name} - ${isCompleted ? 'Erledigt' : 'Nicht erledigt'}`}
+                      >
+                        {isCompleted ? habit.icon : '○'}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           );
         })}
       </div>
 
       {/* Legend */}
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>Fertigstellung:</span>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span>100%</span>
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Legende:</h3>
+        <div className="flex flex-wrap gap-2">
+          {habits.map((habit) => (
+            <div key={habit.id} className="flex items-center space-x-1 text-xs">
+              <div className={`w-3 h-3 rounded ${getHabitColor(habit.color)}`} />
+              <span className="text-gray-600">{habit.name}</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-green-400 rounded-full" />
-              <span>75%+</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-yellow-400 rounded-full" />
-              <span>50%+</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-orange-400 rounded-full" />
-              <span>25%+</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-red-400 rounded-full" />
-              <span>1%+</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-gray-200 rounded-full" />
-              <span>0%</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

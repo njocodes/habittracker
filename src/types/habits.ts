@@ -1,38 +1,73 @@
+// Habit Tracker Types - Komplett neu definiert
+
 export interface Habit {
   id: string;
   name: string;
   description?: string;
   color: string;
   icon: string;
-  targetFrequency: 'daily' | 'weekly' | 'custom';
-  targetCount?: number; // For custom frequency
-  createdAt: Date;
-  isActive: boolean;
+  target_frequency: 'daily' | 'weekly' | 'custom';
+  target_count?: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface HabitEntry {
   id: string;
-  habitId: string;
-  date: string; // YYYY-MM-DD format
+  habit_id: string;
+  user_id: string;
+  date: string;
   completed: boolean;
-  count?: number; // For habits that can be done multiple times
+  count: number;
   notes?: string;
-  completedAt: Date;
+  completed_at?: string;
+  created_at: string;
 }
 
 export interface HabitStats {
-  habitId: string;
-  totalDays: number;
-  completedDays: number;
-  currentStreak: number;
-  longestStreak: number;
-  completionRate: number;
-  lastCompleted?: Date;
+  total_habits: number;
+  completed_today: number;
+  completion_rate: number;
+  streak_days: number;
+  longest_streak: number;
 }
 
-export interface HabitCategory {
+export interface User {
   id: string;
-  name: string;
-  color: string;
-  icon: string;
+  email: string;
+  name?: string;
+  image?: string;
+  created_at: string;
+}
+
+export interface Friend {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+  share_code: string;
+  created_at: string;
+}
+
+// UI Component Props
+export interface HabitCardProps {
+  habit: Habit;
+  isCompleted: boolean;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  progressDots: boolean[];
+}
+
+export interface AddHabitModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddHabit: (habit: Omit<Habit, 'id' | 'created_at' | 'updated_at'>) => void;
+}
+
+export interface CalendarViewProps {
+  habits: Habit[];
+  isHabitCompletedOnDate: (habitId: string, date: string) => boolean;
+  onToggleHabit: (habitId: string, date: string) => void;
 }

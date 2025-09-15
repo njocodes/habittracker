@@ -1,9 +1,11 @@
+// Habit Entries API Route - Komplett neu implementiert
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
 
-// POST /api/habits/[id]/entries - Toggle habit entry for a specific date
+// POST /api/habits/[id]/entries - Toggle habit entry
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +18,7 @@ export async function POST(
     }
 
     const { id: habitId } = await params;
-    const { date, completed, notes } = await request.json();
+    const { date } = await request.json();
 
     if (!date) {
       return NextResponse.json(
@@ -25,10 +27,10 @@ export async function POST(
       );
     }
 
-    // Check if habit belongs to user
+    // Verify habit belongs to user
     const habit = await sql`
       SELECT id FROM habits 
-      WHERE id = ${habitId} AND user_id = ${(session as Session).user.id} AND is_active = true
+      WHERE id = ${habitId} AND user_id = ${session.user.id}
     `;
 
     if (habit.length === 0) {
@@ -37,72 +39,34 @@ export async function POST(
 
     // Check if entry already exists
     const existingEntry = await sql`
-      SELECT id, completed FROM habit_entries 
+      SELECT * FROM habit_entries 
       WHERE habit_id = ${habitId} AND date = ${date}
     `;
 
+    let entry;
+
     if (existingEntry.length > 0) {
-      // Update existing entry
-      const updatedEntry = await sql`
+      // Toggle existing entry
+      entry = await sql`
         UPDATE habit_entries 
-        SET completed = ${completed !== undefined ? completed : !existingEntry[0].completed},
-            notes = ${notes || null},
-            completed_at = ${completed !== false ? new Date().toISOString() : null}
+        SET completed = NOT completed,
+            completed_at = CASE WHEN NOT completed THEN NOW() ELSE NULL END
         WHERE habit_id = ${habitId} AND date = ${date}
         RETURNING *
       `;
-      return NextResponse.json(updatedEntry[0]);
     } else {
       // Create new entry
-      const newEntry = await sql`
-        INSERT INTO habit_entries (habit_id, user_id, date, completed, notes, completed_at)
-        VALUES (${habitId}, ${(session as Session).user.id}, ${date}, ${completed || true}, ${notes || null}, ${completed !== false ? new Date().toISOString() : null})
+      entry = await sql`
+        INSERT INTO habit_entries (habit_id, user_id, date, completed, completed_at)
+        VALUES (${habitId}, ${session.user.id}, ${date}, true, NOW())
         RETURNING *
       `;
-      return NextResponse.json(newEntry[0]);
     }
+
+    return NextResponse.json(entry[0]);
+
   } catch (error) {
-    console.error('Error updating habit entry:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-// GET /api/habits/[id]/entries - Get habit entries for a specific habit
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await getServerSession(authOptions) as any;
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { id: habitId } = await params;
-
-    // Check if habit belongs to user
-    const habit = await sql`
-      SELECT id FROM habits 
-      WHERE id = ${habitId} AND user_id = ${(session as Session).user.id} AND is_active = true
-    `;
-
-    if (habit.length === 0) {
-      return NextResponse.json({ error: 'Habit not found' }, { status: 404 });
-    }
-
-    const entries = await sql`
-      SELECT * FROM habit_entries 
-      WHERE habit_id = ${habitId}
-      ORDER BY date DESC
-    `;
-
-    return NextResponse.json(entries);
-  } catch (error) {
-    console.error('Error fetching habit entries:', error);
+    console.error('Error toggling habit entry:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

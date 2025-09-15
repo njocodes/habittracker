@@ -1,11 +1,12 @@
+// User Registration API Route - Komplett neu implementiert
+
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { sql } from '@/lib/database';
-import { generateShareCode } from '@/lib/init-db';
+import { sql, generateShareCode } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, fullName } = await request.json();
+    const { email, password, name } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -15,11 +16,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = await sql`
+    const existingUsers = await sql`
       SELECT id FROM users WHERE email = ${email}
     `;
 
-    if (existingUser.length > 0) {
+    if (existingUsers.length > 0) {
       return NextResponse.json(
         { error: 'User already exists' },
         { status: 400 }
@@ -27,28 +28,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 12);
-    
+    const saltRounds = 12;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
     // Generate unique share code
-    let shareCode = generateShareCode();
+    let shareCode: string;
     let isUnique = false;
     
     while (!isUnique) {
-      const existingCode = await sql`
+      shareCode = generateShareCode();
+      const existingShareCodes = await sql`
         SELECT id FROM users WHERE share_code = ${shareCode}
       `;
-      if (existingCode.length === 0) {
-        isUnique = true;
-      } else {
-        shareCode = generateShareCode();
-      }
+      isUnique = existingShareCodes.length === 0;
     }
 
     // Create user
     const newUser = await sql`
-      INSERT INTO users (email, password_hash, full_name, share_code)
-      VALUES (${email}, ${passwordHash}, ${fullName || null}, ${shareCode})
-      RETURNING id, email, full_name, share_code
+      INSERT INTO users (email, password_hash, name, share_code)
+      VALUES (${email}, ${passwordHash}, ${name || null}, ${shareCode})
+      RETURNING id, email, name, share_code, created_at
     `;
 
     return NextResponse.json({

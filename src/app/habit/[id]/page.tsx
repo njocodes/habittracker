@@ -1,204 +1,225 @@
+// Habit Detail Page - Komplett neu implementiert
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, MoreVertical, Check, X, Calendar, List, Target } from 'lucide-react';
-import { useHabitsDB } from '@/hooks/useHabitsDB';
-import { Habit } from '@/types/habits';
+import { useRouter, useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Edit, Trash2, Calendar, BarChart3 } from 'lucide-react';
+import { useHabits } from '@/hooks/useHabits';
+import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
+import { de } from 'date-fns/locale';
 
 export default function HabitDetailPage() {
-  const params = useParams();
+  const { data: session } = useSession();
   const router = useRouter();
+  const params = useParams();
   const habitId = params.id as string;
-  
-  const { habits, getHabitStats, isHabitCompletedOnDate, toggleHabitEntry } = useHabitsDB();
-  const [habit, setHabit] = useState<Habit | null>(null);
-  const [stats, setStats] = useState<{
-    completedDays: number;
-    currentStreak: number;
-    longestStreak: number;
-    completionRate: number;
-  } | null>(null);
-  const [viewMode] = useState<'daily' | 'weekly' | 'yearly'>('daily');
+
+  const {
+    habits,
+    isLoading,
+    deleteHabit,
+    toggleHabitEntry,
+    isHabitCompletedOnDate,
+  } = useHabits();
+
+  const [habit, setHabit] = useState<any>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
 
   useEffect(() => {
-    const foundHabit = habits.find(h => h.id === habitId);
-    if (foundHabit) {
+    if (habits.length > 0) {
+      const foundHabit = habits.find(h => h.id === habitId);
       setHabit(foundHabit);
-      setStats(getHabitStats(habitId));
-    } else {
-      router.push('/');
     }
-  }, [habits, habitId, getHabitStats, router]);
+  }, [habits, habitId]);
 
-  if (!habit || !stats) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Lädt...</p>
+        </div>
       </div>
     );
   }
 
-  const today = new Date().toISOString().split('T')[0];
-  const isCompletedToday = isHabitCompletedOnDate(habitId, today);
+  if (!habit) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Gewohnheit nicht gefunden</h1>
+          <button
+            onClick={() => router.push('/')}
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Zurück zur Übersicht
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-
-  const getHabitColor = (color: string) => {
-    const colorMap: Record<string, { light: string; dark: string }> = {
-      green: { light: 'bg-green-200', dark: 'bg-green-500' },
-      blue: { light: 'bg-blue-200', dark: 'bg-blue-500' },
-      yellow: { light: 'bg-yellow-200', dark: 'bg-yellow-500' },
-      purple: { light: 'bg-purple-200', dark: 'bg-purple-500' },
-      red: { light: 'bg-red-200', dark: 'bg-red-500' },
-      orange: { light: 'bg-orange-200', dark: 'bg-orange-500' },
-    };
-    return colorMap[color] || colorMap.green;
+  const getDaysForPeriod = () => {
+    const now = new Date();
+    if (selectedPeriod === 'week') {
+      const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+      return eachDayOfInterval({ start: weekStart, end: weekEnd });
+    } else {
+      return eachDayOfInterval({
+        start: subDays(now, 29),
+        end: now
+      });
+    }
   };
 
-  const colors = getHabitColor(habit.color);
+  const days = getDaysForPeriod();
+  const completedDays = days.filter(day => 
+    isHabitCompletedOnDate(habit.id, format(day, 'yyyy-MM-dd'))
+  ).length;
+
+  const completionRate = Math.round((completedDays / days.length) * 100);
+
+  const getHabitColor = () => {
+    const colors: Record<string, string> = {
+      blue: 'bg-blue-500',
+      green: 'bg-green-500',
+      purple: 'bg-purple-500',
+      orange: 'bg-orange-500',
+      red: 'bg-red-500',
+      yellow: 'bg-yellow-500',
+    };
+    return colors[habit.color] || colors.blue;
+  };
+
+  const handleDelete = async () => {
+    if (confirm('Möchtest du diese Gewohnheit wirklich löschen?')) {
+      await deleteHabit(habit.id);
+      router.push('/');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <header className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              onClick={() => router.push('/')}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{habit.name}</h1>
-              <p className="text-sm text-gray-500">{habit.description}</p>
+            <div className="flex items-center space-x-3">
+              <span className="text-3xl">{habit.icon}</span>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{habit.name}</h1>
+                {habit.description && (
+                  <p className="text-gray-600">{habit.description}</p>
+                )}
+              </div>
             </div>
           </div>
-          
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <MoreVertical className="w-5 h-5 text-gray-600" />
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => {}} // TODO: Implement edit
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Edit className="w-5 h-5 text-gray-500" />
+            </button>
+            <button
+              onClick={handleDelete}
+              className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+            >
+              <Trash2 className="w-5 h-5 text-red-500" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Stats */}
+      <div className="px-4 py-6">
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+            <div className="text-2xl font-bold text-gray-900">{completedDays}</div>
+            <div className="text-sm text-gray-600">
+              {selectedPeriod === 'week' ? 'Diese Woche' : 'Letzte 30 Tage'}
+            </div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+            <div className="text-2xl font-bold text-gray-900">{completionRate}%</div>
+            <div className="text-sm text-gray-600">Erfolgsrate</div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+            <div className="text-2xl font-bold text-gray-900">
+              {habit.target_frequency === 'daily' ? 'Täglich' : 
+               habit.target_frequency === 'weekly' ? 'Wöchentlich' : 
+               `Alle ${habit.target_count} Tage`}
+            </div>
+            <div className="text-sm text-gray-600">Ziel</div>
+          </div>
+        </div>
+
+        {/* Period Selector */}
+        <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
+          <button
+            onClick={() => setSelectedPeriod('week')}
+            className={`px-4 py-2 rounded-md text-sm transition-colors ${
+              selectedPeriod === 'week' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+            }`}
+          >
+            <Calendar className="w-4 h-4 inline mr-2" />
+            Woche
+          </button>
+          <button
+            onClick={() => setSelectedPeriod('month')}
+            className={`px-4 py-2 rounded-md text-sm transition-colors ${
+              selectedPeriod === 'month' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 inline mr-2" />
+            Monat
           </button>
         </div>
-      </div>
 
-      {/* Stats Overview */}
-      <div className="bg-white mx-4 mt-4 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className={`w-16 h-16 ${colors.light} rounded-full flex items-center justify-center`}>
-            <span className="text-3xl">{habit.icon}</span>
-          </div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-900">{stats.completedDays}</h2>
-            <p className="text-gray-500">Abgeschlossene Aufgaben</p>
-          </div>
-        </div>
-
-        {/* Streak Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.currentStreak}</div>
-            <div className="text-sm text-gray-500">Aktuelle Serie</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.longestStreak}</div>
-            <div className="text-sm text-gray-500">Längste Serie</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Today's Action */}
-      <div className="mx-4 mt-4">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-gray-900">Heute</h3>
-              <p className="text-sm text-gray-500">Hast du heute {habit.name.toLowerCase()} gemacht?</p>
-            </div>
-            <button
-              onClick={() => toggleHabitEntry(habitId, today)}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
-                isCompletedToday
-                  ? `${colors.dark} text-white`
-                  : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
-              }`}
-            >
-              {isCompletedToday ? (
-                <Check className="w-6 h-6" />
-              ) : (
-                <X className="w-6 h-6" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Frequency Options */}
-      <div className="mx-4 mt-4">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4">Häufigkeit</h3>
-          <div className="space-y-3">
-            <div className={`flex items-center justify-between p-3 rounded-lg ${
-              viewMode === 'daily' ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-            }`}>
-              <div className="flex items-center space-x-3">
-                <Target className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Täglich</span>
+        {/* Calendar */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
+              <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+                {day}
               </div>
-              <span className="text-sm text-gray-500">Jeden Tag</span>
-            </div>
-            
-            <div className={`flex items-center justify-between p-3 rounded-lg ${
-              viewMode === 'weekly' ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-            }`}>
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-5 h-5 text-green-600" />
-                <span className="font-medium">Wöchentlich</span>
-              </div>
-              <span className="text-sm text-gray-500">Pro Woche</span>
-            </div>
-            
-            <div className={`flex items-center justify-between p-3 rounded-lg ${
-              viewMode === 'yearly' ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-            }`}>
-              <div className="flex items-center space-x-3">
-                <List className="w-5 h-5 text-purple-600" />
-                <span className="font-medium">Jährlich</span>
-              </div>
-              <span className="text-sm text-gray-500">Überblick</span>
-            </div>
+            ))}
           </div>
-        </div>
-      </div>
 
-      {/* Progress Visualization */}
-      <div className="mx-4 mt-4 mb-20">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4">Fortschritt</h3>
-          
-          {/* Progress Dots Grid */}
-          <div className="grid grid-cols-7 gap-2">
-            {Array.from({ length: 28 }, (_, i) => {
-              const date = new Date();
-              date.setDate(date.getDate() - (27 - i));
-              const dateStr = date.toISOString().split('T')[0];
-              const isCompleted = isHabitCompletedOnDate(habitId, dateStr);
-              
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day) => {
+              const dayString = format(day, 'yyyy-MM-dd');
+              const isCompleted = isHabitCompletedOnDate(habit.id, dayString);
+              const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+
               return (
-                <div
-                  key={i}
-                  className={`w-4 h-4 rounded-full ${
-                    isCompleted ? colors.dark : colors.light
-                  }`}
-                  title={date.toLocaleDateString()}
-                />
+                <button
+                  key={dayString}
+                  onClick={() => toggleHabitEntry(habit.id, dayString)}
+                  className={`
+                    h-12 rounded-lg transition-all hover:scale-105
+                    ${isCompleted 
+                      ? `${getHabitColor()} text-white` 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }
+                    ${isToday ? 'ring-2 ring-blue-500' : ''}
+                  `}
+                >
+                  <span className="text-sm">{format(day, 'd')}</span>
+                </button>
               );
             })}
-          </div>
-          
-          <div className="mt-4 text-center">
-            <span className="text-sm text-gray-500">
-              Letzte 28 Tage • {stats.completionRate.toFixed(0)}% abgeschlossen
-            </span>
           </div>
         </div>
       </div>

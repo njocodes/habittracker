@@ -1,34 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { SessionProvider } from "@/components/SessionProvider";
-import { Analytics } from "@vercel/analytics/react";
-import "./globals.css";
+// Root Layout - Komplett neu implementiert
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { SessionProvider } from '@/components/SessionProvider';
+import { Analytics } from '@vercel/analytics/react';
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Habit Tracker",
-  description: "Eine schöne und intuitive Habit-Tracking-App für bessere tägliche Routinen",
+  title: 'Habit Tracker',
+  description: 'Eine schöne und intuitive Habit-Tracking-App für bessere tägliche Routinen',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="de">
+      <body className={inter.className}>
         <SessionProvider>
           {children}
           <Analytics />

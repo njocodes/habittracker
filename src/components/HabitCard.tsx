@@ -1,129 +1,94 @@
+// Habit Card Component - Komplett neu implementiert
+
 'use client';
 
-import { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { useDrag } from '@use-gesture/react';
-import { Habit } from '@/types/habits';
-import { Check, X, MoreVertical, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Check, X, Edit, Trash2 } from 'lucide-react';
+import { HabitCardProps } from '@/types/habits';
 
-interface HabitCardProps {
-  habit: Habit;
-  isCompleted: boolean;
-  onToggle: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  progressDots: boolean[];
-}
-
-export function HabitCard({ habit, isCompleted, onToggle, onEdit, onDelete, progressDots }: HabitCardProps) {
+export function HabitCard({ 
+  habit, 
+  isCompleted, 
+  onToggle, 
+  onEdit, 
+  onDelete, 
+  progressDots 
+}: HabitCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  
-  const x = useMotionValue(0);
-  const opacity = useTransform(x, [-100, 0], [0.3, 1]);
-  
-  const bind = useDrag(
-    ({ down, movement: [mx], direction: [xDir] }) => {
-      setIsDragging(down);
-      
-      if (!down) {
-        // Snap back to original position
-        x.set(0);
-        return;
-      }
-      
-      // Only allow left swipe (negative direction)
-      if (xDir < 0) {
-        x.set(Math.max(mx, -120));
-      }
-    },
-    {
-      axis: 'x',
-      bounds: cardRef,
-      rubberband: true,
-    }
-  );
+
   const getFrequencyText = () => {
-    switch (habit.targetFrequency) {
+    switch (habit.target_frequency) {
       case 'daily':
-        return 'Everyday';
+        return 'Täglich';
       case 'weekly':
-        return 'Weekly';
+        return 'Wöchentlich';
       case 'custom':
-        return `${habit.targetCount} times/week`;
+        return `Alle ${habit.target_count || 1} Tage`;
       default:
-        return 'Daily';
+        return 'Täglich';
     }
   };
 
-  const getHabitColor = (color: string) => {
-    const colorMap: Record<string, { light: string; dark: string }> = {
-      green: { light: 'bg-green-200', dark: 'bg-green-500' },
-      blue: { light: 'bg-blue-200', dark: 'bg-blue-500' },
-      yellow: { light: 'bg-yellow-200', dark: 'bg-yellow-500' },
-      purple: { light: 'bg-purple-200', dark: 'bg-purple-500' },
-      red: { light: 'bg-red-200', dark: 'bg-red-500' },
-      orange: { light: 'bg-orange-200', dark: 'bg-orange-500' },
+  const getHabitColor = () => {
+    const colors: Record<string, { light: string; dark: string }> = {
+      blue: { light: 'bg-blue-100', dark: 'bg-blue-500' },
+      green: { light: 'bg-green-100', dark: 'bg-green-500' },
+      purple: { light: 'bg-purple-100', dark: 'bg-purple-500' },
+      orange: { light: 'bg-orange-100', dark: 'bg-orange-500' },
+      red: { light: 'bg-red-100', dark: 'bg-red-500' },
+      yellow: { light: 'bg-yellow-100', dark: 'bg-yellow-500' },
     };
-    return colorMap[color] || colorMap.green;
+    return colors[habit.color] || colors.blue;
   };
 
-  const colors = getHabitColor(habit.color);
+  const colors = getHabitColor();
 
   const handleDelete = () => {
     if (showDeleteConfirm) {
       onDelete();
-      setShowDeleteConfirm(false);
     } else {
       setShowDeleteConfirm(true);
-      // Reset confirmation after 3 seconds
       setTimeout(() => setShowDeleteConfirm(false), 3000);
     }
   };
 
   return (
-    <div className="relative overflow-hidden mb-3">
-      {/* Action Buttons (behind card) */}
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-red-500 to-red-400 flex items-center justify-end pr-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-3">
+          <span className="text-2xl">{habit.icon}</span>
+          <div>
+            <h3 className="font-semibold text-gray-900">{habit.name}</h3>
+            <p className="text-sm text-gray-500">{getFrequencyText()}</p>
+          </div>
+        </div>
+
         <div className="flex items-center space-x-2">
           <button
             onClick={onEdit}
-            className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
+            className="p-1 hover:bg-gray-100 rounded transition-colors"
           >
-            <MoreVertical className="w-5 h-5 text-white" />
+            <Edit className="w-4 h-4 text-gray-500" />
           </button>
+          
           <button
             onClick={handleDelete}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-              showDeleteConfirm 
-                ? 'bg-white text-red-500' 
-                : 'bg-white bg-opacity-20 text-white'
+            className={`p-1 rounded transition-colors ${
+              showDeleteConfirm
+                ? 'bg-red-100 text-red-600'
+                : 'hover:bg-gray-100 text-gray-500'
             }`}
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4" />
           </button>
-        </div>
-      </div>
 
-      {/* Main Card */}
-      <motion.div
-        ref={cardRef}
-        style={{ x, opacity }}
-        className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 relative z-10"
-        whileTap={{ scale: isDragging ? 0.98 : 1 }}
-        {...(bind() as Record<string, unknown>)}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-3">
-            <span className="text-2xl">{habit.icon}</span>
-            <div>
-              <h3 className="font-semibold text-gray-900">{habit.name}</h3>
-              <p className="text-sm text-gray-500">{getFrequencyText()}</p>
-            </div>
-          </div>
-          
           <button
             onClick={onToggle}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -139,26 +104,26 @@ export function HabitCard({ habit, isCompleted, onToggle, onEdit, onDelete, prog
             )}
           </button>
         </div>
+      </div>
 
-        {/* Progress Dots */}
-        <div className="grid grid-cols-7 gap-1">
-          {progressDots.map((isCompleted, index) => (
-            <div
-              key={index}
-              className={`w-3 h-3 rounded-full ${
-                isCompleted ? colors.dark : colors.light
-              }`}
-            />
-          ))}
+      {/* Progress Dots */}
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {progressDots.map((isCompleted, index) => (
+          <div
+            key={index}
+            className={`w-3 h-3 rounded-full ${
+              isCompleted ? colors.dark : colors.light
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Delete Confirmation */}
+      {showDeleteConfirm && (
+        <div className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+          Nochmal tippen zum Löschen
         </div>
-
-        {/* Delete Confirmation */}
-        {showDeleteConfirm && (
-          <div className="absolute top-2 right-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
-            Tap again to delete
-          </div>
-        )}
-      </motion.div>
-    </div>
+      )}
+    </motion.div>
   );
 }

@@ -1,159 +1,161 @@
+// Custom Hook für Habit Management - Komplett neu implementiert
+
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { Habit, HabitEntry, HabitStats } from '@/types/habits';
 
-const STORAGE_KEY = 'habit-tracker-data';
-
-interface HabitData {
-  habits: Habit[];
-  entries: HabitEntry[];
-}
-
 export function useHabits() {
+  const { data: session } = useSession();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [entries, setEntries] = useState<HabitEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load data from localStorage on mount
-  useEffect(() => {
-    const loadData = () => {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          const data: HabitData = JSON.parse(stored);
-          setHabits(data.habits || []);
-          setEntries(data.entries || []);
-        }
-      } catch (error) {
-        console.error('Error loading habit data:', error);
-      } finally {
-        setIsLoading(false);
+  // Load habits from API
+  const loadHabits = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const response = await fetch('/api/habits');
+      if (response.ok) {
+        const data = await response.json();
+        setHabits(data);
       }
-    };
-
-    loadData();
-  }, []);
-
-  // Save data to localStorage whenever habits or entries change
-  useEffect(() => {
-    if (!isLoading) {
-      const data: HabitData = { habits, entries };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error loading habits:', error);
     }
-  }, [habits, entries, isLoading]);
-
-  const addHabit = (habit: Omit<Habit, 'id' | 'createdAt'>) => {
-    const newHabit: Habit = {
-      ...habit,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-    };
-    setHabits(prev => [...prev, newHabit]);
   };
 
-  const updateHabit = (id: string, updates: Partial<Habit>) => {
-    setHabits(prev => prev.map(habit => 
-      habit.id === id ? { ...habit, ...updates } : habit
-    ));
+  // Load habit entries from API
+  const loadEntries = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const response = await fetch('/api/habits/entries');
+      if (response.ok) {
+        const data = await response.json();
+        setEntries(data);
+      }
+    } catch (error) {
+      console.error('Error loading entries:', error);
+    }
   };
 
-  const deleteHabit = (id: string) => {
-    setHabits(prev => prev.filter(habit => habit.id !== id));
-    setEntries(prev => prev.filter(entry => entry.habitId !== id));
+  // Add new habit
+  const addHabit = async (habitData: Omit<Habit, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const response = await fetch('/api/habits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(habitData),
+      });
+
+      if (response.ok) {
+        const newHabit = await response.json();
+        setHabits(prev => [...prev, newHabit]);
+        return newHabit;
+      }
+    } catch (error) {
+      console.error('Error adding habit:', error);
+    }
   };
 
-  const toggleHabitEntry = (habitId: string, date: string) => {
-    const existingEntry = entries.find(
-      entry => entry.habitId === habitId && entry.date === date
+  // Delete habit
+  const deleteHabit = async (habitId: string) => {
+    try {
+      const response = await fetch(`/api/habits/${habitId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setHabits(prev => prev.filter(habit => habit.id !== habitId));
+        setEntries(prev => prev.filter(entry => entry.habit_id !== habitId));
+      }
+    } catch (error) {
+      console.error('Error deleting habit:', error);
+    }
+  };
+
+  // Toggle habit completion
+  const toggleHabitEntry = async (habitId: string, date: string) => {
+    try {
+      const response = await fetch(`/api/habits/${habitId}/entries`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ date }),
+      });
+
+      if (response.ok) {
+        const updatedEntry = await response.json();
+        setEntries(prev => {
+          const existingIndex = prev.findIndex(
+            entry => entry.habit_id === habitId && entry.date === date
+          );
+          
+          if (existingIndex >= 0) {
+            const updated = [...prev];
+            updated[existingIndex] = updatedEntry;
+            return updated;
+          } else {
+            return [...prev, updatedEntry];
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling habit entry:', error);
+    }
+  };
+
+  // Check if habit is completed on specific date
+  const isHabitCompletedOnDate = (habitId: string, date: string): boolean => {
+    const entry = entries.find(
+      entry => entry.habit_id === habitId && entry.date === date
     );
-
-    if (existingEntry) {
-      // Toggle existing entry
-      setEntries(prev => prev.map(entry =>
-        entry.id === existingEntry.id
-          ? { ...entry, completed: !entry.completed, completedAt: new Date() }
-          : entry
-      ));
-    } else {
-      // Create new entry
-      const newEntry: HabitEntry = {
-        id: crypto.randomUUID(),
-        habitId,
-        date,
-        completed: true,
-        completedAt: new Date(),
-      };
-      setEntries(prev => [...prev, newEntry]);
-    }
+    return entry ? entry.completed : false;
   };
 
-  const updateHabitEntry = (entryId: string, updates: Partial<HabitEntry>) => {
-    setEntries(prev => prev.map(entry =>
-      entry.id === entryId ? { ...entry, ...updates } : entry
-    ));
-  };
+  // Get habit statistics
+  const getHabitStats = (): HabitStats => {
+    const today = new Date().toISOString().split('T')[0];
+    const completedToday = habits.filter(habit => 
+      isHabitCompletedOnDate(habit.id, today)
+    ).length;
 
-  const getHabitStats = (habitId: string): HabitStats => {
-    const habitEntries = entries.filter(entry => entry.habitId === habitId);
-    const completedEntries = habitEntries.filter(entry => entry.completed);
-    
-    // Calculate streaks
-    let currentStreak = 0;
-    let longestStreak = 0;
-    let tempStreak = 0;
-
-    // Calculate streaks by working backwards from today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    for (let i = 0; i < 365; i++) {
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
-
-      const hasEntry = completedEntries.some(entry => entry.date === dateStr);
-
-      if (hasEntry) {
-        tempStreak++;
-        if (i === 0) currentStreak = tempStreak;
-        longestStreak = Math.max(longestStreak, tempStreak);
-      } else {
-        tempStreak = 0;
-      }
-    }
+    const totalCompleted = entries.filter(entry => entry.completed).length;
+    const totalPossible = habits.length * 30; // 30 days
+    const completionRate = totalPossible > 0 ? (totalCompleted / totalPossible) * 100 : 0;
 
     return {
-      habitId,
-      totalDays: habitEntries.length,
-      completedDays: completedEntries.length,
-      currentStreak,
-      longestStreak,
-      completionRate: habitEntries.length > 0 ? (completedEntries.length / habitEntries.length) * 100 : 0,
-      lastCompleted: completedEntries.length > 0 
-        ? new Date(completedEntries[completedEntries.length - 1].completedAt)
-        : undefined,
+      total_habits: habits.length,
+      completed_today: completedToday,
+      completion_rate: Math.round(completionRate),
+      streak_days: 0, // TODO: Implement streak calculation
+      longest_streak: 0, // TODO: Implement streak calculation
     };
   };
 
-  const getHabitEntriesForDate = (habitId: string, date: string) => {
-    return entries.filter(entry => entry.habitId === habitId && entry.date === date);
-  };
-
-  const isHabitCompletedOnDate = (habitId: string, date: string): boolean => {
-    const entriesForDate = getHabitEntriesForDate(habitId, date);
-    return entriesForDate.some(entry => entry.completed);
-  };
+  // Load data when session changes
+  useEffect(() => {
+    if (session?.user?.id) {
+      Promise.all([loadHabits(), loadEntries()]).finally(() => {
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
+    }
+  }, [session]);
 
   return {
     habits,
     entries,
     isLoading,
     addHabit,
-    updateHabit,
     deleteHabit,
     toggleHabitEntry,
-    updateHabitEntry,
-    getHabitStats,
-    getHabitEntriesForDate,
     isHabitCompletedOnDate,
+    getHabitStats,
   };
 }

@@ -1,22 +1,28 @@
+// Main Habit Tracker Page - Komplett neu implementiert
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Download, BarChart3, List, Grid, Calendar } from 'lucide-react';
-import { useHabitsDB } from '@/hooks/useHabitsDB';
+import { useSession } from 'next-auth/react';
+import { motion } from 'framer-motion';
+import { Plus, Calendar, List, Grid, BarChart3, User } from 'lucide-react';
+import { useHabits } from '@/hooks/useHabits';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';
-import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { CalendarView } from '@/components/CalendarView';
-import { useSession } from 'next-auth/react';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { format, subDays } from 'date-fns';
 
+type ViewMode = 'list' | 'grid' | 'calendar';
+type TimeFilter = 'today' | 'week' | 'month';
+
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<'today' | 'weekly' | 'overall'>('overall');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('list');
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const {
     habits,
@@ -25,39 +31,35 @@ export default function HomePage() {
     deleteHabit,
     toggleHabitEntry,
     isHabitCompletedOnDate,
-  } = useHabitsDB();
+    getHabitStats,
+  } = useHabits();
 
-  // Redirect to login if not authenticated
+  // Redirect if not authenticated
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/login');
     }
   }, [status, router]);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
-
   const getProgressDots = (habitId: string, days: number) => {
     const dots = [];
-    const startDate = subDays(new Date(), days - 1);
-    
     for (let i = 0; i < days; i++) {
-      const date = format(subDays(startDate, -i), 'yyyy-MM-dd');
-      dots.push(isHabitCompletedOnDate(habitId, date));
+      const date = subDays(new Date(), i);
+      dots.unshift(isHabitCompletedOnDate(habitId, format(date, 'yyyy-MM-dd')));
     }
-    
     return dots;
   };
 
-  const getDaysForView = () => {
-    switch (activeTab) {
+  const getDaysForTimeFilter = () => {
+    switch (timeFilter) {
       case 'today':
         return 1;
-      case 'weekly':
+      case 'week':
         return 7;
-      case 'overall':
-        return 28; // 4 weeks
+      case 'month':
+        return 30;
       default:
-        return 28;
+        return 7;
     }
   };
 
@@ -66,77 +68,119 @@ export default function HomePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">Lädt...</p>
         </div>
       </div>
     );
   }
 
   if (!session?.user) {
-    return null; // Will redirect to login
+    return null;
   }
+
+  const stats = getHabitStats();
+  const today = format(new Date(), 'yyyy-MM-dd');
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-6">
+      <header className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Habits</h1>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-gray-900">Habits</h1>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <span>{stats.total_habits} Gewohnheiten</span>
+              <span>•</span>
+              <span>{stats.completed_today} heute erledigt</span>
+            </div>
+          </div>
+          
           <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => setIsAddModalOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <Plus className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Download className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <BarChart3 className="w-5 h-5 text-gray-600" />
-            </button>
             <ProfileDropdown user={session.user} />
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
-          {[
-            { key: 'today', label: 'Today' },
-            { key: 'weekly', label: 'Weekly' },
-            { key: 'overall', label: 'Overall' },
-          ].map((tab) => (
+        {/* Stats Cards */}
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="bg-blue-50 rounded-lg p-3">
+            <div className="text-2xl font-bold text-blue-600">{stats.total_habits}</div>
+            <div className="text-sm text-blue-700">Gewohnheiten</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-3">
+            <div className="text-2xl font-bold text-green-600">{stats.completed_today}</div>
+            <div className="text-sm text-green-700">Heute erledigt</div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-3">
+            <div className="text-2xl font-bold text-purple-600">{stats.completion_rate}%</div>
+            <div className="text-sm text-purple-700">Erfolgsrate</div>
+          </div>
+        </div>
+
+        {/* View Controls */}
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'today' | 'weekly' | 'overall')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab.key
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
               }`}
             >
-              {tab.label}
+              <List className="w-4 h-4" />
             </button>
-          ))}
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === 'calendar' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+            {(['today', 'week', 'month'] as TimeFilter[]).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setTimeFilter(filter)}
+                className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                  timeFilter === filter ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
+                }`}
+              >
+                {filter === 'today' ? 'Heute' : filter === 'week' ? 'Woche' : 'Monat'}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6">
+      <main className="px-4 py-6">
         {habits.length === 0 ? (
-          <div className="text-center py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-12"
+          >
             <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
               <Plus className="w-8 h-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No habits yet</h3>
-            <p className="text-gray-500 mb-6">Start building good habits by adding your first one</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Noch keine Gewohnheiten</h3>
+            <p className="text-gray-500 mb-6">Starte deine Reise zu besseren Gewohnheiten</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
             >
-              Add Your First Habit
+              Erste Gewohnheit hinzufügen
             </button>
-          </div>
+          </motion.div>
         ) : (
           <>
             {viewMode === 'calendar' ? (
@@ -146,10 +190,14 @@ export default function HomePage() {
                 onToggleHabit={toggleHabitEntry}
               />
             ) : (
-              <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
+              <div className={
+                viewMode === 'grid' 
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' 
+                  : 'space-y-4'
+              }>
                 {habits.map((habit) => {
                   const isCompletedToday = isHabitCompletedOnDate(habit.id, today);
-                  const progressDots = getProgressDots(habit.id, getDaysForView());
+                  const progressDots = getProgressDots(habit.id, getDaysForTimeFilter());
                   
                   return (
                     <HabitCard
@@ -167,55 +215,21 @@ export default function HomePage() {
             )}
           </>
         )}
-      </div>
+      </main>
 
-      {/* Add Habit Button */}
+      {/* Floating Action Button */}
       {habits.length > 0 && (
-        <div className="fixed bottom-6 right-6">
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-        </div>
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsAddModalOpen(true)}
+          className="fixed bottom-6 right-6 bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center z-40"
+        >
+          <Plus className="w-6 h-6" />
+        </motion.button>
       )}
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex justify-center space-x-8">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'list'
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <List className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'grid'
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <Grid className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => setViewMode('calendar')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'calendar'
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <Calendar className="w-6 h-6" />
-          </button>
-        </div>
-      </div>
 
       {/* Add Habit Modal */}
       <AddHabitModal
