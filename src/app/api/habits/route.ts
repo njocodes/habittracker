@@ -21,7 +21,12 @@ export async function GET() {
       ORDER BY created_at DESC
     `;
 
-    return NextResponse.json(habits);
+    return NextResponse.json(habits, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        'CDN-Cache-Control': 'max-age=300',
+      }
+    });
 
   } catch (error) {
     console.error('Error fetching habits:', error);
@@ -57,7 +62,11 @@ export async function POST(request: NextRequest) {
       RETURNING *
     `;
 
-    return NextResponse.json(newHabit[0]);
+    return NextResponse.json(newHabit[0], {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      }
+    });
 
   } catch (error) {
     console.error('Error creating habit:', error);

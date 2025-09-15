@@ -7,6 +7,52 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  
+  // Output-Konfiguration für Vercel
+  output: 'standalone',
+  
+  // Experimentelle Features für bessere Performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'next-auth'],
+  },
+  
+  // Bundle-Optimierungen
+  webpack: (config, { isServer }) => {
+    // Tree shaking optimieren
+    config.optimization.usedExports = true
+    config.optimization.sideEffects = false
+
+    // Chunk splitting optimieren
+    if (!isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 10,
+          },
+          auth: {
+            test: /[\\/]node_modules[\\/](next-auth|@auth)[\\/]/,
+            name: 'auth',
+            chunks: 'all',
+            priority: 20,
+          },
+          ui: {
+            test: /[\\/]src[\\/]components[\\/]/,
+            name: 'ui',
+            chunks: 'all',
+            priority: 15,
+          },
+        },
+      }
+    }
+
+    return config
+  },
+  
+  // Aggressives Caching für Vercel-Optimierung
   async headers() {
     return [
       {
@@ -15,6 +61,44 @@ const nextConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+          },
+        ],
+      },
+      // Statische Assets - 1 Jahr Cache
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // API-Routes - 5 Minuten Cache
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, s-maxage=300',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=300',
+          },
+        ],
+      },
+      // Statische Seiten - 1 Stunde Cache
+      {
+        source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=3600',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=3600',
           },
         ],
       },

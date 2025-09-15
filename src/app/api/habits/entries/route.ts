@@ -23,7 +23,12 @@ export async function GET() {
       ORDER BY he.date DESC, he.created_at DESC
     `;
 
-    return NextResponse.json(entries);
+    return NextResponse.json(entries, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        'CDN-Cache-Control': 'max-age=300',
+      }
+    });
 
   } catch (error) {
     console.error('Error fetching habit entries:', error);

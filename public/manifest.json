@@ -1,0 +1,19 @@
+{
+  "name": "Habit Tracker",
+  "short_name": "Habits",
+  "description": "Track your daily habits and build better routines",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "lang": "de"
+}

@@ -65,7 +65,11 @@ export async function POST(
     }
 
     console.log('API returning entry:', entry[0]);
-    return NextResponse.json(entry[0]);
+    return NextResponse.json(entry[0], {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      }
+    });
 
   } catch (error) {
     console.error('Error toggling habit entry:', error);
