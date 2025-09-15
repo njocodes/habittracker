@@ -16,7 +16,7 @@ export function HabitCard({
   progressDots 
 }: HabitCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
@@ -108,18 +108,12 @@ export function HabitCard({
     }
   };
 
-  // Mouse handlers for desktop hover
-  const handleMouseEnter = () => {
-    setIsHovered(true);
+  // Click handler for desktop
+  const handleCardClick = () => {
+    setIsClicked(!isClicked);
   };
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setIsSwiped(false);
-    setCurrentX(0);
-  };
-
-  const showActions = isHovered || isSwiped;
+  const showActions = isClicked || isSwiped;
   const swipeProgress = isSwiped ? 1 : currentX;
   const cardWidth = showActions ? `calc(100% - ${80 * swipeProgress}px)` : '100%';
 
@@ -159,12 +153,11 @@ export function HabitCard({
           width: cardWidth
         }}
         exit={{ opacity: 0, y: -20 }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onClick={handleCardClick}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="bg-black rounded-xl shadow-xl border border-gray-800 p-6 hover:shadow-2xl transition-all duration-300 relative z-10"
+        className="bg-black rounded-xl shadow-xl border border-gray-800 p-6 hover:shadow-2xl hover:border-gray-600 transition-all duration-300 relative z-10 cursor-pointer"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
@@ -179,7 +172,10 @@ export function HabitCard({
           
           {/* Toggle Button - Markiert Habit als erledigt/nicht erledigt */}
           <button
-            onClick={onToggle}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
               isCompleted
                 ? `${colors.dark} text-white`
