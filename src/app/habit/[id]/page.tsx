@@ -4,15 +4,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Edit, Trash2, Calendar, BarChart3 } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
+import { Habit } from '@/types/habits';
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
-import { de } from 'date-fns/locale';
 
 export default function HabitDetailPage() {
-  const { data: session } = useSession();
   const router = useRouter();
   const params = useParams();
   const habitId = params.id as string;
@@ -25,7 +22,7 @@ export default function HabitDetailPage() {
     isHabitCompletedOnDate,
   } = useHabits();
 
-  const [habit, setHabit] = useState<any>(null);
+  const [habit, setHabit] = useState<Habit | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { Plus, Calendar, List, Grid, BarChart3, User } from 'lucide-react';
+import { Plus, Calendar, List, Grid } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
 import { HabitCard } from '@/components/HabitCard';
 import { AddHabitModal } from '@/components/AddHabitModal';

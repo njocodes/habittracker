@@ -1,6 +1,6 @@
 // All Habit Entries API Route - Komplett neu implementiert
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/database';
@@ -8,9 +8,10 @@ import { sql } from '@/lib/database';
 // GET /api/habits/entries - Get all habit entries for user
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

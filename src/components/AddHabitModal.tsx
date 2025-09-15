@@ -86,7 +86,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-blue-400"
                   placeholder="z.B. 10.000 Schritte gehen"
                   required
                 />
@@ -100,7 +100,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-blue-400"
                   placeholder="Optionale Beschreibung..."
                   rows={3}
                 />
@@ -159,7 +159,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                 <select
                   value={targetFrequency}
                   onChange={(e) => setTargetFrequency(e.target.value as 'daily' | 'weekly' | 'custom')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-blue-400"
                 >
                   <option value="daily">Täglich</option>
                   <option value="weekly">Wöchentlich</option>
@@ -178,7 +178,7 @@ export function AddHabitModal({ isOpen, onClose, onAddHabit }: AddHabitModalProp
                     min="1"
                     value={targetCount}
                     onChange={(e) => setTargetCount(parseInt(e.target.value) || 1)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-blue-400"
                   />
                 </div>
               )}

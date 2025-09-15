@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Generate unique share code
-    let shareCode: string;
+    let shareCode: string = '';
     let isUnique = false;
     
     while (!isUnique) {

@@ -103,7 +103,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <input
                       type="text"
                       value={user.name || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-transparent"
                       placeholder="Ihr Name"
                     />
                   </div>
@@ -213,7 +213,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                               value={option.value}
                               checked={settings.appearance.theme === option.value}
                               onChange={(e) => updateSetting('appearance', 'theme', e.target.value)}
-                              className="text-blue-600 focus:ring-blue-500"
+                              className="text-blue-600 "
                             />
                             <Icon className="w-4 h-4 text-gray-500" />
                             <span className="text-sm text-gray-700">{option.label}</span>
@@ -230,7 +230,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <select
                       value={settings.appearance.language}
                       onChange={(e) => updateSetting('appearance', 'language', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-transparent"
                     >
                       <option value="de">Deutsch</option>
                       <option value="en">English</option>

@@ -146,7 +146,7 @@ export function useHabits() {
     } else {
       setIsLoading(false);
     }
-  }, [session]);
+  }, [session, loadHabits, loadEntries]);
 
   return {
     habits,

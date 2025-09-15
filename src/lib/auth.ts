@@ -3,9 +3,10 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { sql, generateShareCode } from './database';
+import { sql } from './database';
 
-export const authOptions = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const authOptions: any = {
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -13,7 +14,7 @@ export const authOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials: any) {
+      async authorize(credentials: { email?: string; password?: string }) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -48,13 +49,14 @@ export const authOptions = {
     strategy: 'jwt' as const,
   },
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user }: { token: Record<string, unknown>; user: { id: string; email: string; name?: string; image?: string } }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: { session: any; token: Record<string, unknown> }) {
       if (token && session.user) {
         session.user.id = token.id;
       }

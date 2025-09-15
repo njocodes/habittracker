@@ -11,9 +11,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

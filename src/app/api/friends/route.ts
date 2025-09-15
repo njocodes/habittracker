@@ -6,9 +6,10 @@ import { sql } from '@/lib/database';
 // GET /api/friends - Get all friends for the current user
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -32,9 +33,10 @@ export async function GET() {
 // POST /api/friends - Add a friend by share code
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
