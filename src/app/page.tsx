@@ -84,40 +84,47 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-black shadow-2xl px-6 py-6">
+      <header className="bg-black shadow-2xl px-4 py-4 sm:px-6 sm:py-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white">Habits</h1>
-            <div className="flex items-center space-x-2 text-sm text-gray-300">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Habits</h1>
+            <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-300 mt-1">
               <span>{stats.total_habits} Gewohnheiten</span>
               <span>•</span>
               <span>{stats.completed_today} heute erledigt</span>
             </div>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 flex-shrink-0">
             <ProfileDropdown user={session.user} />
           </div>
         </div>
+        
+        {/* Mobile Stats - Only visible on small screens */}
+        <div className="sm:hidden mt-3 flex items-center space-x-4 text-sm text-gray-300">
+          <span>{stats.total_habits} Gewohnheiten</span>
+          <span>•</span>
+          <span>{stats.completed_today} heute erledigt</span>
+        </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-6 mt-6">
-          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
-            <div className="text-3xl font-bold text-white mb-1">{stats.total_habits}</div>
-            <div className="text-sm text-gray-400 font-medium">Gewohnheiten</div>
+        <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-4 sm:mt-6">
+          <div className="bg-black shadow-xl rounded-xl p-3 sm:p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stats.total_habits}</div>
+            <div className="text-xs sm:text-sm text-gray-400 font-medium">Gewohnheiten</div>
           </div>
-          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
-            <div className="text-3xl font-bold text-white mb-1">{stats.completed_today}</div>
-            <div className="text-sm text-gray-400 font-medium">Heute erledigt</div>
+          <div className="bg-black shadow-xl rounded-xl p-3 sm:p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stats.completed_today}</div>
+            <div className="text-xs sm:text-sm text-gray-400 font-medium">Heute erledigt</div>
           </div>
-          <div className="bg-black shadow-xl rounded-xl p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
-            <div className="text-3xl font-bold text-white mb-1">{stats.completion_rate}%</div>
-            <div className="text-sm text-gray-400 font-medium">Erfolgsrate</div>
+          <div className="bg-black shadow-xl rounded-xl p-3 sm:p-4 border border-gray-800 hover:shadow-2xl transition-shadow">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stats.completion_rate}%</div>
+            <div className="text-xs sm:text-sm text-gray-400 font-medium">Erfolgsrate</div>
           </div>
         </div>
 
         {/* View Controls */}
-        <div className="flex items-center justify-between mt-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-6 sm:mt-8 space-y-3 sm:space-y-0">
           <div className="flex space-x-1 bg-black shadow-xl rounded-xl p-1 border border-gray-800">
             <button
               onClick={() => setViewMode('list')}
@@ -162,7 +169,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="px-6 py-8">
+      <main className="px-4 py-6 sm:px-6 sm:py-8">
         {habits.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

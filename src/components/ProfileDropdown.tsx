@@ -5,6 +5,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { SettingsModal } from './SettingsModal';
 
 interface ProfileDropdownProps {
   user: {
@@ -17,6 +18,7 @@ interface ProfileDropdownProps {
 
 export function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,7 +91,13 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
 
           {/* Menu Items */}
           <div className="py-2">
-            <button className="flex items-center space-x-3 w-full text-left hover:bg-gray-800 px-4 py-2">
+            <button 
+              onClick={() => {
+                setIsSettingsOpen(true);
+                setIsOpen(false);
+              }}
+              className="flex items-center space-x-3 w-full text-left hover:bg-gray-800 px-4 py-2"
+            >
               <Settings className="w-4 h-4 text-gray-300" />
               <span className="text-gray-300">Einstellungen</span>
             </button>
@@ -104,6 +112,13 @@ export function ProfileDropdown({ user }: ProfileDropdownProps) {
           </div>
         </div>
       )}
+      
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        user={user}
+      />
     </div>
   );
 }

@@ -76,16 +76,16 @@ export function CalendarView({ habits, isHabitCompletedOnDate, onToggleHabit }: 
             <div
               key={dayString}
               className={`
-                min-h-[60px] p-1 border border-gray-100
-                ${isCurrentMonth ? 'bg-white' : 'bg-gray-50'}
-                ${isCurrentDay ? 'bg-blue-50 border-blue-200' : ''}
+                min-h-[60px] p-1 border border-gray-800
+                ${isCurrentMonth ? 'bg-black' : 'bg-black'}
+                ${isCurrentDay ? 'bg-blue-900/30 border-blue-600' : ''}
               `}
             >
               <div className="flex flex-col h-full">
                 <div className={`
                   text-sm font-medium mb-1
-                  ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}
-                  ${isCurrentDay ? 'text-blue-600' : ''}
+                  ${isCurrentMonth ? 'text-white' : 'text-gray-500'}
+                  ${isCurrentDay ? 'text-blue-400' : ''}
                 `}>
                   {format(day, 'd')}
                 </div>

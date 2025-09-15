@@ -53,21 +53,21 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-black rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Einstellungen</h2>
+        <div className="flex items-center justify-between p-6 border-b border-gray-800">
+          <h2 className="text-xl font-semibold text-white">Einstellungen</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-300" />
           </button>
         </div>
 
         <div className="flex">
           {/* Sidebar */}
-          <div className="w-48 bg-gray-50 border-r border-gray-200">
+          <div className="w-48 bg-gray-900 border-r border-gray-800">
             <nav className="p-4 space-y-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -77,8 +77,8 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     onClick={() => setActiveTab(tab.id as 'profile' | 'notifications' | 'appearance' | 'privacy')}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        ? 'bg-blue-900 text-blue-300'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
