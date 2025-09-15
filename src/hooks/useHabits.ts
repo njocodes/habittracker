@@ -79,7 +79,6 @@ export function useHabits() {
 
   // Toggle habit completion
   const toggleHabitEntry = async (habitId: string, date: string) => {
-    console.log('toggleHabitEntry called with:', { habitId, date });
     try {
       const response = await fetch(`/api/habits/${habitId}/entries`, {
         method: 'POST',
@@ -88,30 +87,20 @@ export function useHabits() {
         },
         body: JSON.stringify({ date }),
       });
-      
-      console.log('toggleHabitEntry response:', response.status, response.ok);
 
       if (response.ok) {
         const updatedEntry = await response.json();
-        console.log('Updated entry from API:', updatedEntry);
         setEntries(prev => {
           const existingIndex = prev.findIndex(
             entry => entry.habit_id === habitId && entry.date === date
           );
           
-          console.log('Existing entries:', prev);
-          console.log('Looking for habitId:', habitId, 'date:', date);
-          console.log('Found existing index:', existingIndex);
-          
           if (existingIndex >= 0) {
             const updated = [...prev];
             updated[existingIndex] = updatedEntry;
-            console.log('Updated entries array:', updated);
             return updated;
           } else {
-            const newEntries = [...prev, updatedEntry];
-            console.log('Added new entry, new entries array:', newEntries);
-            return newEntries;
+            return [...prev, updatedEntry];
           }
         });
       }
@@ -125,9 +114,7 @@ export function useHabits() {
     const entry = entries.find(
       entry => entry.habit_id === habitId && entry.date === date
     );
-    const isCompleted = entry ? entry.completed : false;
-    console.log('isHabitCompletedOnDate check:', { habitId, date, entry, isCompleted });
-    return isCompleted;
+    return entry ? entry.completed : false;
   };
 
   // Get habit statistics
@@ -183,7 +170,7 @@ export function useHabits() {
     } else {
       setIsLoading(false);
     }
-  }, [session, loadHabits, loadEntries]);
+  }, [session?.user?.id]);
 
   return {
     habits,
