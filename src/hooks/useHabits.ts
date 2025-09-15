@@ -150,8 +150,8 @@ export function useHabits() {
       total_habits: habits.length,
       completed_today: completedToday,
       completion_rate: Math.round(completionRate),
-      streak_days: 0, // TODO: Implement streak calculation
-      longest_streak: 0, // TODO: Implement streak calculation
+      streak_days: 0, // Placeholder - streak calculation not implemented
+      longest_streak: 0, // Placeholder - streak calculation not implemented
     };
   };
 

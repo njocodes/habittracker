@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Plus, Calendar, List, Grid } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
 import { HabitCard } from '@/components/HabitCard';
+import { Habit } from '@/types/habits';
 import { AddHabitModal } from '@/components/AddHabitModal';
 import { EditHabitModal } from '@/components/EditHabitModal';
 import { CalendarView } from '@/components/CalendarView';
@@ -25,7 +26,7 @@ export default function HomePage() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingHabit, setEditingHabit] = useState<any>(null);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
 
   const {
     habits,

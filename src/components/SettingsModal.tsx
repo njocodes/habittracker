@@ -50,11 +50,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
 
   const handleSave = async () => {
     try {
-      // Hier würde normalerweise ein API-Call gemacht werden, um die Profildaten zu speichern
-      console.log('Saving profile data:', profileData);
-      console.log('Saving settings:', settings);
-      
-      // Für jetzt schließen wir das Modal
+      // TODO: Implement API call to save profile data and settings
       onClose();
     } catch (error) {
       console.error('Error saving settings:', error);
