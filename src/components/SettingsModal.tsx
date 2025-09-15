@@ -16,6 +16,10 @@ interface SettingsModalProps {
 
 export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'notifications' | 'appearance' | 'privacy'>('profile');
+  const [profileData, setProfileData] = useState({
+    name: user.name || '',
+    email: user.email || '',
+  });
   const [settings, setSettings] = useState({
     notifications: {
       dailyReminder: true,
@@ -42,6 +46,19 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
         [key]: value
       }
     }));
+  };
+
+  const handleSave = async () => {
+    try {
+      // Hier würde normalerweise ein API-Call gemacht werden, um die Profildaten zu speichern
+      console.log('Saving profile data:', profileData);
+      console.log('Saving settings:', settings);
+      
+      // Für jetzt schließen wir das Modal
+      onClose();
+    } catch (error) {
+      console.error('Error saving settings:', error);
+    }
   };
 
   const tabs = [
@@ -108,7 +125,8 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     </label>
                     <input
                       type="text"
-                      value={user.name || ''}
+                      value={profileData.name}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
                       className="w-full px-6 py-4 bg-gray-900 border border-gray-800 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-white transition-all duration-300 text-lg"
                       placeholder="Ihr Name"
                     />
@@ -306,7 +324,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
             Abbrechen
           </button>
           <button
-            onClick={onClose}
+            onClick={handleSave}
             className="px-8 py-4 text-lg font-semibold text-black bg-white rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl"
           >
             Speichern
