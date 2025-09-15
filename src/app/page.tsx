@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
@@ -29,6 +29,7 @@ export default function HomePage() {
 
   const {
     habits,
+    entries,
     isLoading,
     addHabit,
     deleteHabit,
@@ -53,6 +54,16 @@ export default function HomePage() {
     }
     return dots;
   };
+
+  // Memoize habit completion status to ensure re-render when entries change
+  const habitCompletionStatus = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const status: Record<string, boolean> = {};
+    habits.forEach(habit => {
+      status[habit.id] = isHabitCompletedOnDate(habit.id, today);
+    });
+    return status;
+  }, [habits, entries, isHabitCompletedOnDate]);
 
   const getDaysForTimeFilter = () => {
     switch (timeFilter) {
@@ -207,7 +218,7 @@ export default function HomePage() {
                   : 'space-y-4'
               }>
                 {habits.map((habit) => {
-                  const isCompletedToday = isHabitCompletedOnDate(habit.id, today);
+                  const isCompletedToday = habitCompletionStatus[habit.id] || false;
                   const progressDots = getProgressDots(habit.id, getDaysForTimeFilter());
                   
                   return (
