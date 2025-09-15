@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     },
   },
   
-  // Compiler-Optimierungen
+  // Compiler-Optimierungen für Production
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
     styledComponents: true,
@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Bundle-Optimierungen
+  // EXTREME Bundle-Optimierungen
   webpack: (config, { dev, isServer }) => {
     // EXTREME Performance Optimizations
     
@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
       config.optimization.splitChunks = {
         chunks: 'all',
         minSize: 10000,
-        maxSize: 200000,
+        maxSize: 150000, // Reduziert von 200KB
         minChunks: 1,
         maxAsyncRequests: 30,
         maxInitialRequests: 30,
@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 10,
             enforce: true,
-            maxSize: 150000,
+            maxSize: 100000, // Reduziert von 150KB
           },
           auth: {
             test: /[\\/]node_modules[\\/](next-auth|@auth)[\\/]/,
@@ -73,7 +73,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 20,
             enforce: true,
-            maxSize: 100000,
+            maxSize: 50000, // Reduziert von 100KB
           },
           ui: {
             test: /[\\/]node_modules[\\/](@radix-ui|lucide-react|@headlessui)[\\/]/,
@@ -81,7 +81,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 15,
             enforce: true,
-            maxSize: 120000,
+            maxSize: 80000, // Reduziert von 120KB
           },
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
@@ -89,7 +89,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 25,
             enforce: true,
-            maxSize: 100000,
+            maxSize: 60000, // Reduziert von 100KB
           },
           next: {
             test: /[\\/]node_modules[\\/]next[\\/]/,
@@ -97,7 +97,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 30,
             enforce: true,
-            maxSize: 200000,
+            maxSize: 120000, // Reduziert von 200KB
           },
           hooks: {
             test: /[\\/]src[\\/]hooks[\\/]/,
@@ -105,7 +105,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 5,
             enforce: true,
-            maxSize: 50000,
+            maxSize: 30000, // Reduziert von 50KB
           },
           components: {
             test: /[\\/]src[\\/]components[\\/]/,
@@ -113,13 +113,13 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             priority: 5,
             enforce: true,
-            maxSize: 100000,
+            maxSize: 60000, // Reduziert von 100KB
           },
         },
       };
     }
 
-    // Minimization und weitere Optimierungen
+    // EXTREME Minimization und Optimierungen
     config.optimization.minimize = true;
     config.optimization.concatenateModules = true;
     config.optimization.mergeDuplicateChunks = true;
@@ -135,8 +135,8 @@ const nextConfig: NextConfig = {
     // Performance hints
     config.performance = {
       hints: 'warning',
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000,
+      maxEntrypointSize: 300000, // Reduziert von 512KB
+      maxAssetSize: 300000, // Reduziert von 512KB
     };
 
     // Resolve optimizations
@@ -149,6 +149,28 @@ const nextConfig: NextConfig = {
     if (!dev) {
       config.optimization.usedExports = true;
       config.optimization.sideEffects = false;
+      
+      // EXTREME JavaScript Minification
+      config.optimization.minimizer = [
+        ...config.optimization.minimizer,
+        new (require('terser-webpack-plugin'))({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+              passes: 2,
+            },
+            mangle: {
+              safari10: true,
+            },
+            format: {
+              comments: false,
+            },
+          },
+          extractComments: false,
+        }),
+      ];
     }
 
     return config;
