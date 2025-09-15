@@ -103,7 +103,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <input
                       type="text"
                       value={user.name || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-gray-900"
                       placeholder="Ihr Name"
                     />
                   </div>
@@ -230,7 +230,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
                     <select
                       value={settings.appearance.language}
                       onChange={(e) => updateSetting('appearance', 'language', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-gray-900"
                     >
                       <option value="de">Deutsch</option>
                       <option value="en">English</option>
