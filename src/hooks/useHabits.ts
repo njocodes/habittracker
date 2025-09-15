@@ -124,11 +124,19 @@ export function useHabits() {
 
   // Check if habit is completed on specific date
   const isHabitCompletedOnDate = (habitId: string, date: string): boolean => {
-    const entry = entries.find(
+    const matchingEntries = entries.filter(
       entry => entry.habit_id === habitId && entry.date.startsWith(date)
     );
+    const entry = matchingEntries[matchingEntries.length - 1]; // Get the most recent entry
     const isCompleted = entry ? entry.completed : false;
-    console.log('🔍 isHabitCompletedOnDate check:', { habitId, date, entry, isCompleted, totalEntries: entries.length });
+    console.log('🔍 isHabitCompletedOnDate check:', { 
+      habitId, 
+      date, 
+      matchingEntries: matchingEntries.length,
+      entry: entry ? { id: entry.id, completed: entry.completed, date: entry.date } : null,
+      isCompleted, 
+      totalEntries: entries.length 
+    });
     return isCompleted;
   };
 
