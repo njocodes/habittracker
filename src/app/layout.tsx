@@ -4,8 +4,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { SessionProvider } from '@/components/SessionProvider';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,8 +25,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           {children}
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-          {process.env.NODE_ENV === 'production' && <SpeedInsights />}
         </SessionProvider>
       </body>
     </html>

@@ -79,7 +79,6 @@ export function useHabits() {
 
   // Toggle habit completion
   const toggleHabitEntry = async (habitId: string, date: string) => {
-    console.log('🔄 toggleHabitEntry called:', { habitId, date });
     try {
       const response = await fetch(`/api/habits/${habitId}/entries`, {
         method: 'POST',
@@ -89,36 +88,24 @@ export function useHabits() {
         body: JSON.stringify({ date }),
       });
 
-      console.log('📡 API Response:', response.status, response.ok);
-
       if (response.ok) {
         const updatedEntry = await response.json();
-        console.log('✅ Updated entry from API:', updatedEntry);
-        
         setEntries(prev => {
-          console.log('📝 Current entries before update:', prev);
           const existingIndex = prev.findIndex(
             entry => entry.habit_id === habitId && entry.date === date
           );
           
-          console.log('🔍 Found existing index:', existingIndex);
-          
           if (existingIndex >= 0) {
             const updated = [...prev];
             updated[existingIndex] = updatedEntry;
-            console.log('🔄 Updated existing entry:', updated);
             return updated;
           } else {
-            const newEntries = [...prev, updatedEntry];
-            console.log('➕ Added new entry:', newEntries);
-            return newEntries;
+            return [...prev, updatedEntry];
           }
         });
-      } else {
-        console.error('❌ API Error:', response.status, response.statusText);
       }
     } catch (error) {
-      console.error('💥 Error toggling habit entry:', error);
+      console.error('Error toggling habit entry:', error);
     }
   };
 
@@ -128,16 +115,7 @@ export function useHabits() {
       entry => entry.habit_id === habitId && entry.date.startsWith(date)
     );
     const entry = matchingEntries[matchingEntries.length - 1]; // Get the most recent entry
-    const isCompleted = entry ? entry.completed : false;
-    console.log('🔍 isHabitCompletedOnDate check:', { 
-      habitId, 
-      date, 
-      matchingEntries: matchingEntries.length,
-      entry: entry ? { id: entry.id, completed: entry.completed, date: entry.date } : null,
-      isCompleted, 
-      totalEntries: entries.length 
-    });
-    return isCompleted;
+    return entry ? entry.completed : false;
   };
 
   // Get habit statistics
