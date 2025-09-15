@@ -14,12 +14,14 @@ const nextConfig: NextConfig = {
   // Experimentelle Features für EXTREME Performance
   experimental: {
     optimizePackageImports: ['lucide-react', 'next-auth', '@radix-ui/react-icons'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  },
+  
+  // Turbopack-Konfiguration (Next.js 15+)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },
@@ -34,7 +36,6 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: true,
   
   // EXTREME Bundle-Optimierungen
   webpack: (config, { dev, isServer }) => {
